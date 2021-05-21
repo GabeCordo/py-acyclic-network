@@ -1,0 +1,30 @@
+#block configuration folders
+.idea
+.vscode
+
+#block generic meta-data files/folder
+.installed.cfg
+lib
+lib64
+.DS_Store
+__pychache__
+
+#block PIP meta-data files/folders
+setup.cfg
+setup.py
+develop-eggs
+src/*.egg-info
+eggs
+
+# encryption-key safeguards
+keys
+.pem
+
+#block development folders/files
+bin
+dist
+downloads
+build
+
+# un-needed builds
+quickscms.egg-info
