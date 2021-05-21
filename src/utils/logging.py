@@ -33,7 +33,7 @@ class Logger(linkerJSON.Handler):
 			:the constructor class for the logging class which
 			 initializes the logging json file and the boolean
 			 flag which determines whether logging text will be
-			 outputed to the console.
+			 outputted to the console.
 		'''
 		super().__init__(file_logging_path)
 		self.flag_graphics = flag_graphics
@@ -62,7 +62,7 @@ class Logger(linkerJSON.Handler):
 	def notification(self, text):
 		'''
 			(String) -> None
-			:loggs a new entry to the JSON File specified within the class
+			:logs a new entry to the JSON File specified within the class
 			 constructor 
 		'''
 		temp_time = datetime.now().time()
@@ -78,7 +78,7 @@ class Logger(linkerJSON.Handler):
 	
 	def terminal_stop_logging(self):
 		'''
-			:Will stop a logg for a connection to the server or
+			:Will stop a log for a connection to the server or
 			 client node
 		'''
 		if (self.flag_graphics):

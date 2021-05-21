@@ -2,7 +2,7 @@
 #		python imports
 ###############################
 
-import socket
+import socket, asyncio
 from time import sleep, time
 from threading import Thread
 
@@ -11,7 +11,6 @@ from threading import Thread
 ###############################
 
 from src.utils import errors, enums, logging, containers
-import src.constants as constants
 
 ###############################
 #	   venezia imports
@@ -20,10 +19,18 @@ import src.constants as constants
 from src.venezia.crypto import rsa
 from src.venezia.timing.stopwatch import StopWatch
 from src.venezia.timing.timer import Timer
+from src.venezia.types import dynamic
 
 ###############################
 #		   main code
 ###############################
+
+PARAM_EMPTY_PORT = ''
+PARAM_PERMITTED_CHAR_LEN = 100 #the max number of chars allowed per bitstream (RSA maximum)
+REQUEST_BYTE_SIZE = 1024
+REQUEST_TIMEOUT = 5.0
+QUEUE_MONITOR_SCANNER_DELAY = 60
+QUEUE_MONITOR_MAX_GROWTH = 1000
 
 class Node:
 	def __init__(self, container_addresses, container_paths, container_customizations):
@@ -41,27 +48,26 @@ class Node:
 			
 			** defaulted to end-to-end encryption enabled **
 		'''
-		##Imported Containers##
+		# Imported Containers
 		self.container_addresses = container_addresses
 		self.container_paths = container_paths
 		self.container_customizations = container_customizations
 		
-		##Generic Variables##
-		self.queue = [] #all unhandled requests will go here
+		# Generic Variables
+		socket_request_queue = dynamic.RequestQueue()
+		socket_request_hash_table = dynamic.ResponseHashTable()
 		
-		##Initialize the receiving socket##
+		# Initialize the receiving socket
 		self.incoming = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		
-		##Initialize the encryption handler##
+		# Initialize the encryption handler
 		self.handler_keys = rsa.Handler(container_paths.directory_key_private, container_paths.directory_key_public)
 		
-		##Settup logging file for connection speed data
+		# Settup logging file for connection speed data
 		logging.Logger(container_paths.directory_file_logging, container_customizations.supports_console_cout)
-		
-		#these threads will need to be visible to a grouping of functions in the
-		#class so we are throwing it in the constructor
-		self.thread_one = Thread(target=self.listen, args=())
-		self.thread_two = Thread(target=self.monitor, args=())
+
+		# this thread is the background event loop to run through coroutine functions
+		self.background_event_loop = Thread(target=self.listen, args=())
 	
 	def getIp(self):
 		'''
@@ -94,13 +100,13 @@ class Node:
 	def isMonitoring(self):
 		'''
 			(Node) -> (boolean)
-			:the getter function for whether the queue monitor is deamianzied
+			:the getter function for whether the queue monitor is daemon
 			
 			@returns a boolean value representing whether the monitor is toggled
 		'''
 		return self.container_customizations.supports_monitoring
 	
-	def specialFunctionality(self, message: str, address: str) -> (bool, str):
+	def specialFunctionality(self, message: str, address: str) -> tuple(bool, str):
 		'''
 			(string, string) -> (boolean, string)
 			:child classes can overide this function to offer special functionality
@@ -157,7 +163,7 @@ class Node:
 				
 				if (self.container_customizations.supports_encryption == True):
 					#receive the connectors public RSA key
-					publicRSA = c.recv(constants.REQUEST_BYTE_SIZE)
+					publicRSA = c.recv(REQUEST_BYTE_SIZE)
 				
 				print(f'Console: Received publicRSA') #console logging
 				print(publicRSA) #debuging
@@ -166,7 +172,7 @@ class Node:
 				time_warning = time() #keep track of the start (we want to avoid going over ~10 seconds)
 				
 				optimizer.lap() #start timing the transfer time according to latency
-				cyphertexts = [c.recv(constants.REQUEST_BYTE_SIZE)]
+				cyphertexts = [c.recv(REQUEST_BYTE_SIZE)]
 				optimizer.lap() #measure the latency time to compensate for when sending data
 				print(f'Console: Time difference - {optimizer.getLog()}')
 				i = 0
@@ -176,10 +182,10 @@ class Node:
 				while (cyphertexts[i] != b'<<'): #loop until the terminating operator is reached
 				
 					sleep(delay)
-					cyphertexts.append(c.recv(constants.REQUEST_BYTE_SIZE))
+					cyphertexts.append(c.recv(REQUEST_BYTE_SIZE))
 					
 					#ensure data collection has not exceeded 5 seconds
-					if ((time() - time_warning) > constants.REQUEST_TIMEOUT):
+					if ((time() - time_warning) > REQUEST_TIMEOUT):
 						raise TimeoutError('Data Transfer Exceeded 5 seconds')
 					i+=1
 				
@@ -280,7 +286,7 @@ class Node:
 			#ensure the socket is closed
 			self.incoming.close()
 	
-	def send(self, ip_target: int, message=enums.ReturnCode.PING_SERVER: enums.ReturnCode, port=constants.PARAM_EMPTY_PORT: str) -> (str):
+	async def send(self, ip_target: int, message=enums.ReturnCode.PING_SERVER, port=PARAM_EMPTY_PORT) -> (str):
 			'''
 				(Node, int, message) -> (string)
 				:sends a bitsream to another Node.
@@ -296,11 +302,11 @@ class Node:
 				
 				#if we aren't send a port to send the message to, assume its the same as
 				#the one given upon class declaration (option: send to a diff network)
-				if (port == constants.PARAM_EMPTY_PORT):
+				if (port == PARAM_EMPTY_PORT):
 					port = self.port
 				
 				optimizer = StopWatch(6) #we will use this to capture time between data captures to offer the best latency
-				outgoing.connect((constants.ip_target, port)) #all outgoing requests are sent on port 8075
+				outgoing.connect((ip_target, port)) #all outgoing requests are sent on port 8075
 				
 				#if we leave the string empty we are asking for a simple ping of the listening
 				#server so if we establish connection return '1' and end everything else
@@ -308,7 +314,7 @@ class Node:
 					return enums.ReturnCode.PING_SERVER
 				
 				optimizer.lap()
-				received_rsa_public = outgoing.recv(constants.REQUEST_BYTE_SIZE).decode()
+				received_rsa_public = outgoing.recv(REQUEST_BYTE_SIZE).decode()
 				optimizer.lap()
 				
 				key_pub_ours = self.handler_keys.getPublicKey()
@@ -322,11 +328,11 @@ class Node:
 				if(received_rsa_public != 'None'):
 					#if encryption is enabled, cypher it with the received public rsa
 					#we need to make sure the byte size of the string being encrypted does not grow > than 250
-					remaining_chars = constants.PARAM_PERMITTED_CHAR_LEN
+					remaining_chars = PARAM_PERMITTED_CHAR_LEN
 					
-					while ((len(message) - len(message_lst)*constants.PARAM_PERMITTED_CHAR_LEN) > constants.PARAM_PERMITTED_CHAR_LEN): #repeat untill the len is less than 150 chars
+					while ((len(message) - len(message_lst)*PARAM_PERMITTED_CHAR_LEN) > PARAM_PERMITTED_CHAR_LEN): #repeat until the len is less than 150 chars
 						#for visibility we will throw this into temp vars
-						beggining = remaining_chars - constants.PARAM_PERMITTED_CHAR_LEN
+						beggining = remaining_chars - PARAM_PERMITTED_CHAR_LEN
 						end = remaining_chars
 						
 						#encrypt and append to the list of message segments to send that are encrypted
@@ -334,10 +340,10 @@ class Node:
 						message_lst.append(temp)
 						
 						#append the number of chars that remain within the message
-						remaining_chars+=constants.PARAM_PERMITTED_CHAR_LEN
+						remaining_chars+=PARAM_PERMITTED_CHAR_LEN
 					
 					#append the final part of the message to the list
-					beggining = remaining_chars - constants.PARAM_PERMITTED_CHAR_LEN
+					beggining = remaining_chars - PARAM_PERMITTED_CHAR_LEN
 					temp = self.handler_keys.encrypt(message[beggining:], received_rsa_public)
 					message_lst.append(temp)
 						
@@ -360,14 +366,14 @@ class Node:
 				#we are going to receive a response code back from the user after this possibly indicating some status
 				#code or will 'spit out' some sort of data associated with the request
 				
-				response_code = outgoing.recv(constants.REQUEST_BYTE_SIZE)
+				response_code = outgoing.recv(REQUEST_BYTE_SIZE)
 				
 				if (response_code == b'1'):
 				
 					#receive the cypher text from the connector
 					time_warning = time() #keep track of the start (we want to avoid going over ~10 seconds)
 					
-					cyphertexts = [outgoing.recv(constants.REQUEST_BYTE_SIZE)]
+					cyphertexts = [outgoing.recv(REQUEST_BYTE_SIZE)]
 					i = 0
 
 					delay = optimizer.getShortestLap()
@@ -375,7 +381,7 @@ class Node:
 					while (cyphertexts[i] != b'<<'): #loop until the terminating operator is reached
 					
 						sleep(delay)
-						cyphertexts.append(outgoing.recv(constants.REQUEST_BYTE_SIZE))
+						cyphertexts.append(outgoing.recv(REQUEST_BYTE_SIZE))
 						
 						#ensure data collection has not exceeded 5 seconds
 						if ((time() - time_warning) > 5.0):
@@ -428,38 +434,13 @@ class Node:
 				print(f'Console: Experienced Error {e}') #debugging
 				
 				#we need to check that the ip_target is not self.ip_backup to avoid going into a recursive infinite loop
-				if (self.container_customizations.supports_backup_ip != None and constants.ip_target != self.container_customizations.ip_backup):
+				if (self.container_customizations.supports_backup_ip != None and ip_target != self.container_customizations.ip_backup):
 					self.send(self.ip_backup, message)
 				else:
 					outgoing.close()
 					return e
 	
-	def sizeOfQueue(self) -> (int):
-		'''
-			(Node) -> (int)
-			@returns the size of the queued messages
-		'''
-		return len(self.queue)
-	
-	def deQueue(self) -> (str):
-		'''
-			(Node) -> (string)
-			:retrieves the enqueued messages that have been retrieved by the
-			 open port on the node.
-			
-			@returns a string of max bit-length 1024
-			@exception returns an empty string if the queue is empty
-		'''
-		length_queue = len(self.queue)
-		if (length_queue > 0):
-			#return the first element in the queue according to the first-in-first-out
-			#principle enforced by the queue algorithm
-			return self.queue.pop(0)
-		else:
-			#the queue was empty, no bitsreams have been received or approved for enqueuing
-			return ''
-	
-	def monitor(self) -> None:
+	async def monitor(self) -> None:
 		'''
 			(Node) -> None
 			
@@ -475,13 +456,13 @@ class Node:
 		length_queue_previous = 0
 		#runs throughout the lifetime of the incoming socket
 		while (self.container_customizations.supports_listening == True):
-			sleep(constants.QUEUE_MONITOR_SCANNER_DELAY)
+			sleep(QUEUE_MONITOR_SCANNER_DELAY)
 			#account for the fact that during runtime, this might be closed midway
 			try:
 				#check to see if the queue size has increased by N in N(s) seconds
 				#it should process quickly, this means its laggining/being flooded
 				length_queue = len(self.queue)
-				if ((length_queue - length_queue_previous) > constants.QUEUE_MONITOR_MAX_GROWTH):
+				if ((length_queue - length_queue_previous) > QUEUE_MONITOR_MAX_GROWTH):
 					#reset the queue to 60s before the current check
 					self.queue = self.queue[:length_queue_previous+1]
 				else:

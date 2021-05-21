@@ -23,8 +23,8 @@ class Paths:
 	def __init__(self, directory_key_public, directory_key_private, directory_file_logging):
 		'''
 			(String, String, String) -> None
-			:a container class for JSON and public key direcetories required for encrypting
-			 packet traffic and logging latency data for tracking (respectivly)
+			:a container class for JSON and public key directories required for encrypting
+			 packet traffic and logging latency data for tracking (respectively)
 		'''
 		self.directory_key_public = directory_key_public
 		self.directory_key_private = directory_key_private

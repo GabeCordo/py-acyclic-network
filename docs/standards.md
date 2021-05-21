@@ -4,14 +4,14 @@ These standards attempt to enforce consistency across the codebase to assist dev
 ## Naming Conventions
 All identifiers must follow these conventions to better identify types derived from scms.
 
-1. CamelCase for all Classes
+1. CamelCase for all Classes and Functions
     1. N prefix for extensions of modules that manipulate the default network code.
     2. R prefix for extensions of the Relay Node.
     3. B prefix for extensions of the Balancer Node.
     4. I prefix for extensions of the Indexer Node.
     5. EY prefix for extensions of the Entry Node.
     6. ET prefix for extensions of the Exit Node.
-2. Snake_Case for all Functions and Variables
+2. Snake_Case for all Variables
     1. _p object reference
     2. _e enumerators
     3. _s classes acting as structs

@@ -53,6 +53,7 @@ class RequestCode(Enum):
 	SEND_DATA_EXPECT_RESPONSE = 3
 	SEND_DATA_TO_RELAY = 4
 	RELAY_FOLLOWUP = 5
+	DO_YOU_KNOW = 6
 	
 ##########################################
 #			 Routine Enums
@@ -85,3 +86,13 @@ class ProcessStrategies(Enum):
 	ONE_FOR_ONE = 0 # if a child process is terminated, restart
 	ONE_FOR_ALL = 1 # if a child process is terminated, restart all child processes
 	REST_FOR_ONE = 2 # if a child process is terminated, restart all processes started after it
+
+##########################################
+#		 RequestHashTable Enums
+##########################################
+
+class RequestTableLifetime(Enum):
+	NEVER = 0 # this is element will exist till the node is terminated
+	RESPONDED = 1 # this will be deleted when a response is gathered
+	TIME = 2 # the request has lasted longer than the maximum time permitted
+	RESPONDED_TIME = 3 # a response is generated OR the time limit has been exceeded
