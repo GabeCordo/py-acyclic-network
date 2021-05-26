@@ -10,7 +10,7 @@ from threading import Thread
 #		global imports
 ###############################
 
-from src.utils import errors, enums, logging, containers
+from src.utils import logging
 
 ###############################
 #	   venezia imports
@@ -19,7 +19,7 @@ from src.utils import errors, enums, logging, containers
 from src.venezia.crypto import rsa
 from src.venezia.timing.stopwatch import StopWatch
 from src.venezia.timing.timer import Timer
-from src.venezia.types import dynamic
+from src.venezia.types import dynamic, errors, enums, containers
 
 ###############################
 #		   main code
@@ -69,7 +69,7 @@ class Node:
 		# this thread is the background event loop to run through coroutine functions
 		self.background_event_loop = Thread(target=self.listen, args=())
 	
-	def getIp(self):
+	def get_ip(self) -> str:
 		'''
 			(Node) -> (string)
 			:the getter function for the ip bind to the Node Class
@@ -78,7 +78,7 @@ class Node:
 		'''
 		return self.container_addresses.ip
 	
-	def isListening(self):
+	def is_listening(self) -> bool:
 		'''
 			(Node) -> (boolean)
 			:the getter function for whether accepting incoming traffic is
@@ -88,7 +88,7 @@ class Node:
 		'''
 		return self.container_customizations.supports_listening
 		
-	def isEncrypted(self):
+	def is_encrypted(self) -> bool:
 		'''
 			(Node) -> (boolean)
 			:the getter function for whether encryption is toggled
@@ -97,7 +97,7 @@ class Node:
 		'''
 		return self.container_customizations.supports_encryption
 	
-	def isMonitoring(self):
+	def is_monitoring(self) -> bool:
 		'''
 			(Node) -> (boolean)
 			:the getter function for whether the queue monitor is daemon
@@ -106,7 +106,7 @@ class Node:
 		'''
 		return self.container_customizations.supports_monitoring
 	
-	def specialFunctionality(self, message: str, address: str) -> tuple(bool, str):
+	def special_functionality(self, message: str, address: str) -> tuple(bool, str):
 		'''
 			(string, string) -> (boolean, string)
 			:child classes can overide this function to offer special functionality
@@ -115,8 +115,9 @@ class Node:
 			@returns a boolean value representing whether to enqueue message
 		'''
 		return (True, '0') #by default we want it to queue all the requests
+		#TODO replace return type
 	
-	def specialFunctionalityError(self, status: str) -> enums.ReturnCode:
+	def special_functionality_error(self, status: str) -> enums.ReturnCode:
 		'''
 			(string, string) -> (string)
 			:child classes can overide this function to offer special functionality
@@ -472,7 +473,7 @@ class Node:
 				#stop monitoring the queue
 				return
 	
-	def settup(self):
+	def settup(self) -> None:
 		'''
 			(Node) -> None
 			:creates two new threads for the socket node on the network
@@ -502,52 +503,52 @@ class Node:
 			pass
 			
 		
-	def isThreadOneRuning(self):
+	def is_thread_one_runing(self) -> bool:
 		'''
 			(Node) -> (boolean)
 		'''
 		return self.thread_one.is_alive()
 	
-	def closeThreadOne(self):
+	def close_thread_one(self) -> bool:
 		'''
 			(Node) -> None
 		'''
 		self.thread_one._Thread_stop()
 			
-	def isThreadTwoRunning(self):
+	def is_thread_two_running(self) -> bool:
 		'''
 			(Node) -> (boolean)
 		'''
 		return self.thread_two.is_alive()
 		
-	def closeThreadTwo(self):
+	def close_thread_two(self) -> None:
 		'''
 			(Node) -> None
 		'''
 		self.thread_two._Thread_stop()
 	
-	def isThreadThreeRunning(self):
+	def is_thread_three_tunning(self) -> None:
 		'''
 			(Node) -> (boolean)
 		'''
 		return self.thread_two.is_alive()
 		
-	def closeThreadThree(self):
+	def close_thread_three(self) -> None:
 		'''
 			(Node) -> None
 		'''
 		self.thread_two._Thread_stop()
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return f'Node(ip:{self.container_addresses.ip}, port:{self.container_addresses.port}, queue-len:{len(self.queue)})'
 
 	def __eq__(self, other):
-		if (other == None):
-			return
-		if (type(other) != type(Node)):
-			return
+		if (not isinstance(other, Node)):
+			return False
+		if (not isinstance(other, self)):
+			return False
 		return self.container_customizations == other.container_customizations
 
-	def __del__(self):
+	def __del__(self) -> None:
 		self.close()
 		print('Console: the node has been closed.')

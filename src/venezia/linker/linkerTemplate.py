@@ -9,12 +9,13 @@ from threading import Thread
 ###############################
 
 from src.venezia.types import errors
+from src.venezia.types.dynamic import Result
 
 ###############################
 #		   main code
 ###############################
 class Handler:
-	def __init__(self, *args):
+	def __init__(self, *args) -> None:
 		'''
 			(Handler, n strings) -> None
 			:the constructor function of the linkerJSON handler class
@@ -28,7 +29,7 @@ class Handler:
 		#self.template_pull(None) #validate that the files provided to the class exist
 		#TODO - fix this this is based on a legacy version
 			
-	def template_push(self, dump_function):
+	def template_push(self, dump_function) -> Result(bool, FileNotFoundError):
 		'''
 			(Handler, Markup Dump Function) -> None
 			:responsible for pushing the class dictionaries in data into
@@ -40,12 +41,13 @@ class Handler:
 		try:
 			for i in range(0, len(self.files)):
 				write_to_markup = open(self.files[i], 'w')
-				dump_function(self.data[i], write_to_json)
+				dump_function(self.data[i], write_to_markup)
 				write_to_markup.close()
-		except:
-			raise FileNotFoundError('linkerJSON Error: one or more of the provided files does not exist.')
+			return Result(True, None)
+		except Exception:
+			return Result(None, FileNotFoundError)
 	
-	def template_pull(self, load_function):
+	def template_pull(self, load_function) -> Result(bool, FileNotFoundError):
 		'''
 			(Handler, Markup Loader Function) -> None
 			:responsible for pulling the data from the JSON files into the
@@ -60,15 +62,15 @@ class Handler:
 					file_current = open(self.files[i][0], 'r')
 					self.data.append(load_function(file_current))
 					file_current.close()
+			return Result(True, None)
 		except Exception as e:
-			print(e)
-			raise FileNotFoundError(f'linkerJSON Error: one or more of the provided files does not exist.')
+			return Result(None, FileNotFoundError)
 	
-	def cleanerFunctionality(self, element):
+	def cleaner_functionality(self, element):
 		'''(Handler) -> None
 			:adds special functionality to the Markup updater file
 		'''
-		pass
+		pass # this is a slot function
 	
 	def cleaner(self, timer):
 		'''
@@ -88,13 +90,13 @@ class Handler:
 			#push all local changes to the JSON files
 			self.push()
 			
-	def startCleaner(self, timer):
+	def start_cleaner(self, timer):
 		'''
 			(Handler) -> None
 			:Starts the cleaner, we want to avoid using it (wastes cpu thread)
 			 if we don't need it
 		'''
-		#thread one and two are occupied by listening port and queue monitor respecitvley
+		#thread one and two are occupied by listening port and queue monitor respectively
 		thread_three = Thread(target=self.cleaner(timer), args=())
 		thread_three.daemon = True
 		thread_three.start()

@@ -9,6 +9,7 @@ from json import dump, load
 ###############################
 
 from src.venezia.linker import linkerTemplate
+from src.venezia.types.decorators import overrides
 
 ###############################
 #	  JSON LINKER Wrapper
@@ -23,6 +24,7 @@ class Handler(linkerTemplate.Handler):
 		'''
 		super().__init__(args)
 	
+	@overrides(linkerTemplate.Handler)
 	def push(self):
 		'''
 			:pushes to the changes in the class
@@ -30,6 +32,7 @@ class Handler(linkerTemplate.Handler):
 		'''
 		self.template_push(dump)
 	
+	@overrides(linkerTemplate.Handler)
 	def pull(self):
 		'''
 			:pulls all the data within the JSON

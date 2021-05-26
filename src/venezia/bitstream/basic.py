@@ -10,13 +10,14 @@
 #	   venezia imports
 ###############################
 from src.venezia.types.errors import *
+from src.venezia.types.dynamic import Result
 
 ###############################
 #		   main code
 ###############################
 class Parser():
 	
-	def __init__(self, message=''):
+	def __init__(self, message='') -> None:
 		'''
 			(Parser, string) -> None
 			@description the constructor class for the simple parser
@@ -41,7 +42,7 @@ class Parser():
 		
 		self.parse()
 	
-	def parse(self):
+	def parse(self) -> Result:
 		'''
 			(Parser) -> None
 			:using indexing, parses the pieces of data into the class
@@ -60,10 +61,11 @@ class Parser():
 			
 			#split the data added on-top of the request
 			self.data = self.message[request_seperator+1:].split('~')
-		except:
-			raise MismatchedSyntax()
+			return Result(True, None)
+		except Exception as e:
+			return Result(None, MismatchedSyntax)
 		
-	def getRequest(self):
+	def get_request(self) -> str:
 		'''
 			(Parser) -> (string)
 			:the getter function for the messages request field
@@ -73,7 +75,7 @@ class Parser():
 		'''
 		return self.request
 		
-	def getPrimaryData(self):
+	def get_primary_data(self) -> str:
 		'''
 			(Parser) -> (string)
 			:the getter function for the messages primary data field
@@ -83,10 +85,10 @@ class Parser():
 		'''
 		try:
 			return self.data[0]
-		except:
+		except Exception as e:
 			return ''
 		
-	def getSecondaryData(self):
+	def get_secondary_data(self) -> str:
 		'''
 			(Parser) -> (string)
 			:the getter function for the messages secondary data field
@@ -96,10 +98,10 @@ class Parser():
 		'''
 		try:
 			return self.data[1]
-		except:
+		except Exception as e:
 			return ''
 		
-	def getOtherData(self):
+	def get_other_data(self) -> list(str):
 		'''
 			(Parser) -> (list of strings)
 			:the getter function for the messages other data field(s)
@@ -109,10 +111,10 @@ class Parser():
 		'''
 		try:
 			return self.data[2:]
-		except:
+		except Exception as e:
 			return ''
 		
-	def __str__(self):
+	def __str__(self) -> str:
 		'''
 			(Parser) -> (string)
 			@returns a string representation of the class variables in the proper
@@ -120,9 +122,9 @@ class Parser():
 		'''
 		return f'{self.request}:{self.data_primary}/{self.data_secondary}'
 		
-	def __repr__(self):
+	def __repr__(self) -> str:
 		'''
 			(Parser) -> (string)
 			@returns a string representation of the class type
 		'''
-		return f'Parser({message})'
+		return f'Parser({self.message})'

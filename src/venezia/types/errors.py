@@ -115,3 +115,11 @@ class IncompleteRoutineConfig(Exception):
 class ConflictingRoutineConfig(Exception):
 	def __init__(self):
 		Exception.__init__(self, f'The configurations found the in the venezia routine is conflicting, hence, invalid.')
+
+##########################################
+#			  Dynamic Errors
+##########################################
+
+class InvalidResultClassArguments(Exception):
+	def __init__(self):
+		Exception.__init__(self, 'Any.class has been given either a value and exception or none at all.')

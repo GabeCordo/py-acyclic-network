@@ -37,7 +37,7 @@ class Request():
 			}
 		}
 
-	def unserialize(self, json_dic) -> None:
+	def un_serialize(self, json_dic) -> None:
 		'''
 		'''
 		self.ip = json_dic['ip']
@@ -102,7 +102,7 @@ class Log():
 			}
 		}
 
-	def unserialize(self, json_dic) -> None:
+	def un_serialize(self, json_dic) -> None:
 		'''
 		'''
 		self.message = json_dic['msg']
@@ -208,7 +208,7 @@ class Event:
 	def serialize(self) -> dict:
 		pass
 
-	def unserialize(self, json_dic) -> None:
+	def un_serialize(self, json_dic) -> None:
 		pass
 		
 
@@ -239,7 +239,7 @@ class Keys:
 		self._privateKey = ''
 		self.verifyPath() #verify the are not corrupted
 	
-	def verifyPath(self):
+	def verify_path(self):
 		'''
 			(Keys) -> None
 			:checks whether the pathways provided are a valid key pair
@@ -257,13 +257,13 @@ class Keys:
 				
 				#check if the original message and the decryption match
 				if (message == h.decrypt(encrypted)):
-					#if so, we can push them to the class variables and stop the funciton
+					#if so, we can push them to the class variables and stop the function
 					self._publicKey = h.getPublicKey()
 					self._privateKey = h.getPrivateKey()
-		except:
-			raise MismatchedKeys()
+		except Exception as e:
+			raise errors.MismatchedKeys()
 			
-	def getPublicKey(self):
+	def get_public_key(self):
 		'''
 			(Keys) -> (string)
 			:the getter function for the public encryption key
@@ -272,7 +272,7 @@ class Keys:
 		'''
 		return self._publicKey
 		
-	def getPrivateKey(self):
+	def get_private_key(self):
 		'''
 			(Keys) -> (string)
 			:the getter function for the private encryption key
@@ -284,5 +284,5 @@ class Keys:
 	def serialize(self) -> dict:
 		pass
 
-	def unserialize(self, json_dic) -> None:
+	def un_serialize(self, json_dic) -> None:
 		pass

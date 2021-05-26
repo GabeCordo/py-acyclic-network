@@ -8,9 +8,16 @@
 	as requested by the class instance variables		***
 '''
 ###############################
+#	   python imports
+###############################
+
+from cffi import FFI
+
+###############################
 #	   venezia imports
 ###############################
-from cffi import FFI
+
+from src.venezia.types import errors
 
 ###############################
 #		   main code
@@ -22,7 +29,7 @@ class Parser:
 			(String) -> (None)
 			@conditions the bitream used as the function argument,
 						aka. the class paramaters must be a valid
-						syntatical statement acording to the def.
+						syntactical statement according to the def.
 						showed within the comments of the rust parser
 		'''
 		self.message = message
@@ -56,7 +63,7 @@ class Parser:
 			
 			return stream_modified
 		except Exception as e:
-			raise MismatchedSyntax()
+			raise errors.MismatchedSyntax()
 	
 	def get_message(self):
 		'''
