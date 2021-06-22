@@ -5,15 +5,15 @@
 import cmd, os, sys
 
 #####################################
-#		  cli Imports
+# cli Imports
 #####################################
 
-from src.venezia.network import node
+from src.core.network import node
 from src.utils import containers, generator
 from src.cli.graphics import terminal
 
 #####################################
-#		Default Paramaters
+# Default Paramaters
 #####################################
 
 config = config.Config('json/config.json')

@@ -13,9 +13,13 @@ Venezia is a pythonic framework for developing decentralized networks, providing
 	3. Indexing Server (Creating IP-ID Account related pairs)
 * Customizable Traffic Receivers/Transfer Routines
 
+### Dependencies
+
+We recommend running the project with PyPy version >= 3.7-v.7.3.5
+
 ### Installation
 
-	No pypi package is planned till the beta release.
+No PyPi package is planned till the beta release.
 
 ### Further Reading
 
@@ -26,3 +30,5 @@ Venezia is a pythonic framework for developing decentralized networks, providing
 ## Credits
 
 > Gabriel Cordovado
+
+[![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg)](https://www.digitalocean.com/?refcode=8e25aa8fe5cb&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
