@@ -110,7 +110,7 @@ class Node:
 		"""
 		return self.container_customizations.supports_monitoring
 	
-	def special_functionality(self, message: str, address: str) -> Result(tuple[enums.EnqueueRequest, str], Exception):
+	def special_functionality(self, message: str, address: str) -> Result(Tuple[enums.EnqueueRequest, str], Exception):
 		"""
 			child classes can override this function to offer special functionality
 			to the listening aspect of the server

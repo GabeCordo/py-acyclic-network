@@ -1,5 +1,5 @@
 # Venezia
-The Software of Channels
+This project has been active since September 2019.
 
 ## Description
 
@@ -14,18 +14,36 @@ Venezia is a pythonic framework for developing decentralized networks, providing
 * Customizable Traffic Receivers/Transfer Routines
 
 ### Dependencies
+Development and testing done with Python >= 3.7.9, other packages required to run the CLI and web-portal include:
 
-We recommend running the project with PyPy version >= 3.7-v.7.3.5
+* pycryptodomex=3.10.1
+* clint=0.3.2
+* pyyaml=5.4.1
+* flask=2.0.1
 
 ### Installation
+As of right now, the only way to install the program is to create a local pip installation.
 
-No PyPi package is planned till the beta release.
+* Navigate to the root folder.
+
+	```python -m build```
+
+	```pip3 install .```
+
+* Validate the installation
+
+	```pip3 show acyclicnet```
+	
+	###### If the installation is valid, pip will return information about the installed package.
+
+
 
 ### Further Reading
+This README.md is limited to avoid overloading you with information. If you want to understand some of the decisions behind the design or how to contribute, these resources can help to get you started.
 
-* [Documentation](https://github.com/GabeCordo/venezia/tree/master/docs/reference.md)
-* [Framework](https://github.com/GabeCordo/venezia/tree/master/docs/functions.md)
-* [Standard](https://github.com/GabeCordo/venezia/tree/master/docs/standards.md)
+* [Documentation](https://github.com/GabeCordo/venezia/tree/master/docs/reference.md) - design explanations and how to set up your network.
+* [Framework](https://github.com/GabeCordo/venezia/tree/master/docs/functions.md) - available functions, paramaters, use-cases. 
+* [Standards](https://github.com/GabeCordo/venezia/tree/master/docs/standards.md) - read this before contributing to the project.
 
 ## Credits
 

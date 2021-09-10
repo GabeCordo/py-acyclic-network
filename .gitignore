@@ -10,8 +10,6 @@ lib64
 __pycache__
 
 #block PIP meta-data files/folders
-setup.cfg
-setup.py
 develop-eggs
 src/*.egg-info
 eggs
@@ -22,9 +20,8 @@ keys
 
 #block development folders/files
 bin
-dist
 downloads
 build
 
 # un-needed builds
-quickscms.egg-info
+acyclicnet.egg-info

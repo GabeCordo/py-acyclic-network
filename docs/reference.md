@@ -216,12 +216,12 @@ one solution to fit all circumstances, the use of either syntax is dependent on 
 encouraged to use the basic syntax for packets that transfer small variants of data to avoid the use
 of a more expensive markup language.
 
-#### Basic Syntax <span style="color:red">*[deprecated]*</span>
+#### Basic Syntax (Optional)
 A simple syntax for formatting parameters around a hard-coded request within the node, it is planned
 to be deprecated in future updates when a more flexible "advanced syntax" is released.
 
 `` request:primary~secondary~...``
-#### Advanced Syntax
+#### Advanced Syntax (Depreciated)
 Using a simple markup language written in Rust, the markup language provides a looser syntax (as
 not elements must be present other than the reserved characters for the field). The goal is to make
 it easier for both the programmer and program to understand the contents of packet through character-labels.
@@ -230,6 +230,8 @@ it easier for both the programmer and program to understand the contents of pack
 
 The design goal of the markup language was to provide intuitive mnemonics and characters to represent the various
 elements found within the network packet.
+
+#### Venezia Protocol (Standard)
 
 ---
 

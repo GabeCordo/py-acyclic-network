@@ -1,0 +1,4 @@
+pycryptodomex=3.10.1
+clint=0.3.2
+pyyaml=5.4.1
+flask=2.0.1

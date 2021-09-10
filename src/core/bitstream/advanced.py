@@ -11,7 +11,7 @@
 #	   python imports
 ###############################
 
-from cffi import FFI
+#from cffi import FFI
 
 ###############################
 # core imports
@@ -33,6 +33,8 @@ class Parser:
 						showed within the comments of the rust parser
 		'''
 		self.message = message
+		print("Advanced has been depreciated! - Revert to the Venezia Protocol Parser")
+		quit(1)
 	
 	def pull(self, request):
 		'''
