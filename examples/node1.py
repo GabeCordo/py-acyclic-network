@@ -1,18 +1,31 @@
-from venezia.network.node import Node
-from venezia.types import containers
+from pyacyclicnet.network.node import Node
+from pyacyclicnet.types import containers
 
 from time import sleep
 
 addresses = containers.Addresses(
-ip, port [, ip_index [, ip_backup ]]
+	ip='',
+ 	port='1052',
+  	ip_index='', 
+    ip_backup=''
 )
 
 paths = containers.Paths(
-directory_key_public, directory_key_private, directory_key_public
+	directory_key_public='keys/public1.pem', 
+ 	directory_key_private='keys/private1.pem',
+  	directory_file_logging='index/json/log_node1.json'
 )
 
 options = containers.Customizations(
-[ encryption [, listening [, monitoring [, recovery [, supports_console_cout ]]]]]
+	supports_encryption = True,	
+    supports_listening = True,
+    supports_monitoring = True,
+    supports_backup_ip = False,
+    supports_recovery = False,
+    supports_console_cout = True,
+    supports_data_capture = True,
+    supports_dynamic_interaction = False,
+    supports_dynamic_keyset = True,
 )
 
 n1 = Node(
@@ -20,16 +33,6 @@ n1 = Node(
 	container_paths = paths,
 	container_customizations = options
 )
-
-'''
-	ip='',
-	port=1052,
-	directory_key_public='keys/public1.pem',
-	directory_key_private='keys/private1.pem',
-	directory_file_logging='index/json/log_node1.json',
-	supports_console_cout=True,
-	supports_backup_ip=False
-'''
 
 while True:
 
@@ -40,4 +43,3 @@ while True:
 			bitsream_received = n1.deQueue()
 			
 			print(bitsream_received)
-		

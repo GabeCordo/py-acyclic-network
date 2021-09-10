@@ -72,8 +72,10 @@ class Node:
 		# Setup logging file for connection speed data
 		logging.Logger(container_paths.directory_file_logging, container_customizations.supports_console_cout)
 
-		# this thread is the background event loop to run through coroutine functions
-		self.background_event_loop = Thread(target=self.listen, args=())
+		#these threads will need to be visible to a grouping of functions in the
+		#class so we are throwing it in the constructor
+		self.thread_one = Thread(target=self.listen, args=())
+		self.thread_two = Thread(target=self.monitor, args=())
 	
 	def get_ip(self) -> str:
 		"""
@@ -289,7 +291,7 @@ class Node:
 			# ensure the socket is closed
 			self.incoming.close()
 	
-	async def send(self, ip_target: int, message=enums.ReturnCode.PING_SERVER, port=PARAM_EMPTY_PORT) \
+	def send(self, ip_target: int, message=enums.ReturnCode.PING_SERVER, port=PARAM_EMPTY_PORT) \
 		-> Result(str, Exception):
 		"""
 			sends a bitstream to another Node.
@@ -444,7 +446,7 @@ class Node:
 				outgoing.close()
 				return e
 	
-	async def monitor(self) -> Result(bool, Exception):
+	def monitor(self) -> Result(bool, Exception):
 		"""
 			the monitor function is an active listener on the enqueued messages
 			looking for potential spamming or overflows
