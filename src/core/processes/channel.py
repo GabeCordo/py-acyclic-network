@@ -6,6 +6,7 @@
 # core imports
 ###############################
 
+from typing import Generic, Tuple
 from src.core.timing.timer import Timer
 
 ###############################
@@ -29,7 +30,7 @@ class Channel:
 		self._timer = Timer() #records the time container was created
 		self._metadata = []
 	
-	def time_running(self):
+	def time_running(self) -> float:
 		'''
 			(Container) -> (float)
 			:return the time the the Container has been alive for since being
@@ -38,8 +39,16 @@ class Channel:
 			@returns a float representing the time on the heap 
 		'''
 		return self._timer.timeAlive()
+
+	def freeze(self):
+		# TODO
+		pass
+
+	def restart(self):
+		# TODO
+		pass
 		
-	def kill(self):
+	def kill(self) -> float:
 		'''
 			(Container) -> (float)
 			:calls the destructor method of the class argument pushed to generic
@@ -50,7 +59,7 @@ class Channel:
 		del(self.class_g)
 		del(self._timer)
 	
-	def __eq__(self, other):
+	def __eq__(self, other) -> bool:
 		'''
 			(Container, object) -> (boolean)
 			:compares two wrapper containers based upon the time they have been
@@ -68,7 +77,7 @@ class Channel:
 			
 		return True
 		
-	def __lt__(self, other):
+	def __lt__(self, other) -> bool:
 		'''
 			(Container, object) -> (boolean)
 			:compares two wrapper containers based upon whether the current object
@@ -86,7 +95,7 @@ class Channel:
 		
 		return True
 		
-	def __gt__(self, other):
+	def __gt__(self, other) -> bool:
 		'''
 			(Container, object) -> (boolean)
 			:compares two wrapper containers based upon whether the current object
@@ -106,7 +115,7 @@ class Channel:
 		
 		return True
 		
-	def __str__(self):
+	def __str__(self) -> str:
 		'''
 			(Container) -> (string)
 			:this function overrides the string-representation of the Container
@@ -117,7 +126,7 @@ class Channel:
 		'''
 		return f'Container({self.class_g}, {self.alive})'
 	
-	def __repr__(self):
+	def __repr__(self) -> Tuple():
 		'''
 			(Container) -> (Generic, list of Generics)
 			:the Container class is represented as a tuple which contains the

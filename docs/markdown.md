@@ -1,47 +1,60 @@
-# Venezia Markdown
-Data is encapsulated in containers, containing metadata pre-and-post fixes around square brackets.
+# Acyclic Packet Protocol
+The acyclic packet protocol is a basic format for routing-based TCP streams between multiple network nodes. This helps to standardize a parsing processes within each node and enforce certain parameters to be included in each transmission that guarantee: (1) route, (2) authenticator to validate no man-in-the-middle (MITM) attack has occurred, (3) identify a common PAT node to use along the routing-chain. If you haven't already, please read the [project manual](reference.md) to understand why it is important to contain these pieces of data within each data-transmission.
 
-## Identifiers
-Identifiers are metadata prefixed to the encapsulated data to identify the meaning or purpose of information. Identifiers can be reserved keywords that are used by the markdown interpreter to unwrap data patterns common between multiple nodes.
+#### **Current Version** 0.0.1
+#### **Release Date** 15-09-2021
 
-1. request
-2. request
-3. pathway
-4. destination
+---
 
-## Data
-Data is the associative information tied to the identifier. It can be further encapsulated containers or a list of data-components separated with the data_separator symbol. 
+## Syntax
 
-## Handlers
-Handlers are metadata postfixed to the encapsulated data to identify how the data should be processed, or who the data should be sent to.
+| Section  | i0           | i1  | i2  | i3  | i4  |
+| -------- |:-------------:| -----:| -----:| -----:| -----:|
+| 1        | request | pat_id | pat_auth | next_node | idp_ip
+| 2        | node_1      |   node_2 | ... | ... | node_n |
+| 3        | data_start | ... | ... | ... | data_end
 
+### Sections
++ Metadata (1)
++ Pathway (2)
++ Data (3)
+### Reserved Keywords and Chars
++ <> Sections Separator
 
-## Symbols
-Symbols are used to separate data elements of the markdown, they cannot be used within the prefix, postfix, or data portions of the markdown
+    Symbols are used to separate data elements of the markdown, they cannot be used within the prefix, postfix, or data portions of the markdown
 
-1. data_start [
-2. data_end ]
-3. data_separator ~
-4. handler_start (
-5. handler_end )
++ :: Value Separator
++ \* Special Character Prefix
++ << End of File
 
-```
-A: request[[ B ]](origin_identifier)
-B: pathway[[ C ]](list~~of~~nodes)
-C: message[[ data ]](destination_identifier)
-```
+---
+## Examples
 
 ### Example 1
-For communications between two nodes with no pathway
+Packet without any special character prefixes.
 
 ```
-request[[origin[[destination[[(data)]](value)]](value)]](value)
+request::pat_id::pat_auth::node0::idp_ip<>node1::node2::node3::node4<>Hello stranger.<<
+
+Header -> request::pat_id::pat_auth::node0::idp_ip
+          <>
+Path   -> node1::node2::node3::node4
+          <>
+Data   -> Hello stranger.
+          <<
 ```
 
 ### Example 2
-For communications between two nodes with a pathway
+Packet containing special character prefixes.
 
 ```
-request[[pathway[[origin[[destination[[(data)]](value)]](value)]](d~~a~~t~~a)]](value)
+request::pat_id::pat_auth::node0::idp_ip<>node1::node2::node3::node4<>Hello*0 stran*1ger.<<
+
+Header -> request::pat_id::pat_auth::node0::idp_ip
+          <>
+Path   -> node1::node2::node3::node4
+          <>
+Data   -> Hello*0 stran*1ger.
+          <<
 ```
 

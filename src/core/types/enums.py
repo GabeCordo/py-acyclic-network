@@ -91,7 +91,7 @@ class Serialize(Enum):
 ##########################################
 
 
-class Process(Enum):
+class ProcessType(Enum):
 	SUPERVISOR = 0
 	CHANNEL = 1
 

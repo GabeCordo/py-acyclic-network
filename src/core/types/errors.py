@@ -106,6 +106,14 @@ class TrafficOverloadError(Exception):
 class MismatchedSyntax(Exception):
 	def __init__(self):
 		Exception.__init__(self, f'Parsing Error: There was an attempt to pass incorrect syntax to the parser.')
+
+class SanitizerCleaningFailed(Exception):
+	def __init__(self):
+		Exception.__init__(self, f'Sanitizer Error: There was a failure while attempting to remove reserved chars from your bitsream.')
+
+class SanitizerRestoreFailed(Exception):
+	def __init__(self):
+		Exception.__init__(self, f'Sanitizer Error: There was a failure while attempting to restore reserved chars in your bitsream.')
 		
 ##########################################
 # Encryption Errors
@@ -138,7 +146,7 @@ class IncompleteRoutineConfig(Exception):
 
 class ConflictingRoutineConfig(Exception):
 	def __init__(self):
-		Exception.__init__(self, f'The configurations found the in the venezzia routine is conflicting, hence, invalid.')
+		Exception.__init__(self, f'The configurations found the in the venezia routine is conflicting, hence, invalid.')
 
 ##########################################
 # Dynamic Errors
@@ -157,3 +165,15 @@ class InvalidResultClassArguments(Exception):
 class QueueEmpty(Exception):
 	def __init__(self):
 		super().__init__(self, 'Tried popping from an empty Queue.class')
+
+##########################################
+# Proc Errors
+##########################################
+
+class ProcessLabelInvalid(Exception):
+	def __init__(self):
+		super().__init__(self, 'The provided label for the new Supravisor child-process is invalid.')
+
+class ProcessLabelNotFound(Exception):
+	def __init__(self):
+		super().__init__(self, 'Could not find the Process Label under the Supravisor.')
