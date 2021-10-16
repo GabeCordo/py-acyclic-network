@@ -2,10 +2,10 @@ from typing import Generic, TypeVar
 from pyacyclicnet.core.types import errors
 
 T = TypeVar('T')
-
+G = TypeVar('G')
 
 class Result:
-    def __init__(self, value_g: Generic[T], exception_g) -> None:
+    def __init__(self, value_g: Generic[T], exception_g: Generic[G]) -> None:
         """
             (Result, Generic, Exception) -> None
             :Constructor for the Any Class
@@ -13,12 +13,9 @@ class Result:
             @returns nothing
             @exception returns InvalidResultClassArguments exception
         """
-        # either value_g or exception_g needs to have a non None value
-        if (value_g is not None) ^ (exception_g is not None):
-            self.__value_g = value_g
-            self.__exception_g = exception_g
-        else:
-            raise errors.InvalidResultClassArguments()
+        # either value_g or exception_g should have a non None value (XOR)
+        self.__value_g = value_g
+        self.__exception_g = exception_g
 
     def is_valid(self) -> bool:
         """

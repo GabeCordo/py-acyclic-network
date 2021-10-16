@@ -38,7 +38,7 @@ class Linker:
 			@exception throws a FileNotFound() error if one or more of the
 					files are not valid
 		"""
-		try:
+		try:	
 			for i in range(0, len(self.files)):
 				write_to_markup = open(self.files[i], 'w')
 				dump_function(self.data[i], write_to_markup)

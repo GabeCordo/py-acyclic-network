@@ -1,5 +1,5 @@
 from pyacyclicnet.core.types import enums
-from pyacyclicnet.core.bitstream.basic import Parser
+from pyacyclicnet.core.bitstream.basic import BasicParser
 from datetime import datetime
 from pyacyclicnet.core.types.result import Result
 
@@ -25,7 +25,7 @@ class ResponseHashTable:
 		else:
 			return True
 
-	def insert_request(self, request: Parser, lifetime: enums.RequestTableLifetime) -> bool:
+	def insert_request(self, request: BasicParser, lifetime: enums.RequestTableLifetime) -> bool:
 		"""
 		"""
 		if request is None:
@@ -55,7 +55,7 @@ class ResponseHashTable:
 		except Exception as e:
 			return Result(str, e)
 
-	def get_identifiers(self, nonce: str) -> Result(tuple(str, str), Exception):
+	def get_identifiers(self, nonce: str) -> Result(tuple(), Exception):
 		"""
 			grab the origin and destination values of the nonce request
 

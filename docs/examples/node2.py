@@ -1,9 +1,9 @@
-from pyacyclicnet.network.node import Node
-from pyacyclicnet.types import containers
+from pyacyclicnet.core.network.node import Node
+from pyacyclicnet.core.types import containers
 
 addresses = containers.Addresses(
 	ip='',
- 	port='1053',
+ 	port=1053,
   	ip_index='', 
     ip_backup=''
 )
@@ -29,14 +29,14 @@ options = containers.Customizations(
 n2 = Node(
 	addresses,
  	paths,
- 	containers.NODE
+ 	containers.NODE_SETTINGS_DEFAULT
 )
-n2.settup()
+n2.setup()
 
-pk = n2.handler_keys.getPublicKey().decode()
+pk = n2.handler_keys.get_public_key()
 message1 = f'2:bob~{pk}~127.0.0.1'
 message2 = f'3:bob~127.0.0.1'
 
 
-result = n2.send('127.0.0.1', message2, 1052)
+result = n2.send(port=1052)  # the default send is a "ping" request to see if the server is alive
 print(result)

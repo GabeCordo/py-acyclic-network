@@ -25,6 +25,7 @@ class LinkerJson(Linker):
 			Constructor function for the JSON handler. This function allows any number of JSON files to be entered under args*.
 		"""
 		super().__init__(args)
+		self.pull()  # pull the loaded json files (if they exist) into memory
 	
 	@implements(Linker)
 	def push(self):

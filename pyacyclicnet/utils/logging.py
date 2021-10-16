@@ -34,6 +34,7 @@ class Logger(LinkerJson):
 			flag which determines whether logging text will be
 			outputted to the console.
 		"""
+		print(file_logging_path)
 		super().__init__(file_logging_path)
 		self.flag_graphics = flag_graphics
 		

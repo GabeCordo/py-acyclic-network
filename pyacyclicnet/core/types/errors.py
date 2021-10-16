@@ -19,7 +19,7 @@ class UnauthorizedNetwork(Exception):
 
 class IllegalRequest(Exception):
 	def __init__(self, request):
-		Exception.__init__(self, f'Generic Network Error: Illegal Request was provided to the node.')
+		Exception.__init__(self, f'Generic Network Error: Illegal Request was provided to the node. This could be missing paramaters is a send request.')
 		self.request = request
 
 

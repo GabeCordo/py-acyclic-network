@@ -7,6 +7,8 @@ from time import sleep, time
 from threading import Thread
 from typing import Tuple
 
+import traceback
+
 ###############################
 # global imports
 ###############################
@@ -24,12 +26,13 @@ from pyacyclicnet.core.types.containers import Addresses, Paths, Customizations
 from pyacyclicnet.core.types.result import Result
 from pyacyclicnet.core.types.requestqueue import RequestQueue
 from pyacyclicnet.core.types.responsehashtable import ResponseHashTable
+from pyacyclicnet.core.types.errors import IllegalRequest
 
 ###############################
 # constants
 ###############################
 
-PARAM_EMPTY_PORT = ''
+PARAM_EMPTY_PORT = 23245
 PARAM_PERMITTED_CHAR_LEN = 100  # the max number of chars allowed per bitstream (RSA maximum)
 REQUEST_BYTE_SIZE = 1024
 REQUEST_TIMEOUT = 5.0
@@ -111,7 +114,7 @@ class Node:
 		"""
 		return self.container_customizations.supports_monitoring
 	
-	def special_functionality(self, message: str, address: str) -> Result(Tuple(enums.EnqueueRequest, str), Exception):
+	def special_functionality(self, message: str, address: str) -> Result(tuple(), Exception):
 		"""
 			child classes can override this function to offer special functionality
 			to the listening aspect of the server
@@ -187,7 +190,8 @@ class Node:
 					
 					# ensure data collection has not exceeded 5 seconds
 					if (time() - time_warning) > REQUEST_TIMEOUT:
-						raise TimeoutError('Data Transfer Exceeded 5 seconds')
+						print('Console: Closed Connection as Data Transfer Exceeded 5 seconds')
+						break
 					i += 1
 				
 				ciphertexts.pop()  # remove the null terminating character
@@ -292,7 +296,7 @@ class Node:
 			# ensure the socket is closed
 			self.incoming.close()
 	
-	def send(self, ip_target: int, message=enums.ReturnCode.PING_SERVER, port=PARAM_EMPTY_PORT) \
+	def send(self, ip_target="127.0.0.1", request=enums.RequestCode.PING_SERVER, message=None, port=PARAM_EMPTY_PORT) \
 		-> Result(str, Exception):
 		"""
 			sends a bitstream to another Node.
@@ -310,6 +314,12 @@ class Node:
 			# the one given upon class declaration (option: send to a diff network)
 			if port == PARAM_EMPTY_PORT:
 				port = self.container_addresses.port
+
+			# if we are sending an explicit message to a server node, we need to have the
+			# the message param as a non-None value (every other enum type needs data except
+   			#  for the PING_SERVER value)
+			if request is not enums.RequestCode.PING_SERVER and message is None:
+				return Result(None, IllegalRequest)
 				
 			optimizer = StopWatch(6)  # we will use this to capture time between data captures to offer the best latency
 			outgoing.connect((ip_target, port))  # all outgoing requests are sent on port 8075
@@ -319,9 +329,9 @@ class Node:
 			if message == enums.ReturnCode.PING_SERVER:
 				return enums.ReturnCode.PING_SERVER
 
-			optimizer.lap()
+			optimizer.lap()  # finish measuring the time it takes to connect to the client
 			received_rsa_public = outgoing.recv(REQUEST_BYTE_SIZE).decode()
-			optimizer.lap()
+			optimizer.lap()  # finish measuring the time it takes to receive the encryption hello
 				
 			key_pub_ours = self.handler_keys.get_public_key()
 			if received_rsa_public != 'None':
@@ -392,7 +402,8 @@ class Node:
 						
 					# ensure data collection has not exceeded 5 seconds
 					if (time() - time_warning) > 5.0:
-						raise TimeoutError('Data Transfer Exceeded 5 seconds')
+						print('Console: Closed Connection as Data Transfer Exceeded 5 seconds')
+						break
 						
 					i += 1
 						
@@ -417,7 +428,7 @@ class Node:
 				print(f'Console: Formatted cypher to plain text')  # console logging
 					
 				# if we receive a status code of '0' that means something went wrong
-				if (response == '400') or (response is None):
+				if (response is None) or (response == '400'):
 					# if there is default to returning an empty string
 					outgoing.close()
 					return 'Error 400: Bad Request'
@@ -439,6 +450,7 @@ class Node:
 			
 		except Exception as e:
 			print(f'Console: Experienced Error {e}')  # debugging
+			print(traceback.format_exc())  # debugging
 			# we need to check that the ip_target is not self.ip_backup to avoid going into a recursive infinite loop
 			if (self.container_customizations.supports_backup_ip is not None) \
 				and (ip_target != self.container_addresses.ip_backup):
