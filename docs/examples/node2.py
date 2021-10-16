@@ -3,7 +3,7 @@ from pyacyclicnet.core.types import containers
 
 addresses = containers.Addresses(
 	ip='',
- 	port=1053,
+ 	port=23244,
   	ip_index='', 
     ip_backup=''
 )
@@ -38,5 +38,5 @@ message1 = f'2:bob~{pk}~127.0.0.1'
 message2 = f'3:bob~127.0.0.1'
 
 
-result = n2.send(port=1052)  # the default send is a "ping" request to see if the server is alive
-print(result)
+result = n2.send(port=23245)  # the default send is a "ping" request to see if the server is alive
+print(result.is_valid())

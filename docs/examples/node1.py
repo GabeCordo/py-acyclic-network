@@ -1,11 +1,11 @@
-from pyacyclicnet.network.node import Node
-from pyacyclicnet.types import containers
+from pyacyclicnet.core.network.node import Node
+from pyacyclicnet.core.types import containers
 
 from time import sleep
 
 addresses = containers.Addresses(
 	ip='',
- 	port='1052',
+ 	port=23245,
   	ip_index='', 
     ip_backup=''
 )
@@ -38,7 +38,7 @@ while True:
 
 		sleep(0.01) #stop the cpu from constantly running at 100% cpu
 		
-		if (n1.sizeOfQueue() > 0):
+		if (n1.socket_request_queue.size_of_queue() > 0):
 			
 			bitsream_received = n1.deQueue()
 			
