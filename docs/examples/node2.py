@@ -29,7 +29,7 @@ options = containers.Customizations(
 n2 = Node(
 	addresses,
  	paths,
- 	options
+ 	containers.NODE
 )
 n2.settup()
 
