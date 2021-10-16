@@ -1,3 +1,4 @@
+from pyacyclicnet.core.bitstream.advanced import Parser
 from pyacyclicnet.core.types.packet import Packet
 from pyacyclicnet.core.types.result import Result 
 from pyacyclicnet.core.types.errors import MismatchedSyntax, SanitizerCleaningFailed, SanitizerRestoreFailed
@@ -14,6 +15,7 @@ class ProtocolParser:
         # meaning that we are missing some key-pieces of data
         if len(raw_metadata) < 5:
             return Result(None, MismatchedSyntax)
+
         metadata = raw_metadata.split("::")
         path = raw_path.split("::")
         # return the data in a packet object so that the calling section can call dependant functions
@@ -64,4 +66,7 @@ class ProtocolParser:
                 __tmp_data_lst.remove(count+1)
         return Result(str(__tmp_data_lst), None)
         
-        
+if __name__ == '__main__':
+    p = ProtocolParser()
+    result = p.parse('4::8::16::8::4<>8::8::8<>HelloFriend')
+    print(result.value())
