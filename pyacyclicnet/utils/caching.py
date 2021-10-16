@@ -8,12 +8,12 @@ from os import remove
 #	   fileHandler for Caching
 #####################################
 
-class fileHandler:
+class Cache:
 	
 	def __init__(self, directory):
 		self.directory = directory
 	
-	def generatePath(self, id_user):
+	def generate_path(self, file_identifier):
 		'''
 			(fileHandler, string) -> (string)
 			
@@ -23,17 +23,18 @@ class fileHandler:
 			@exception if an empty-string is provided, the pathway will
 					   not be created an an empty string will be returned
 		'''
-		#a valid user-id cannot be an empty-string
-		if (id_user == ''):
-			return id_user
+		# a valid cache identifier cannot be an empty-string because it will
+		# throw an OS exception for '.txt' being an invalid name
+		if (file_identifier == ''):
+			return file_identifier
 		
 		path = (self.directory
-				+ id_user
+				+ file_identifier
 				+ '.txt')
 
 		return path
 
-	def writeCachedFile(self, id_user, message=''):
+	def write_cached_file(self, identifier, message=''):
 		'''
 			(fileHandler, string, string) -> (boolean)
 			
@@ -42,7 +43,7 @@ class fileHandler:
 			@exception returns boolean false if the file-exists or the
 					   pathway is corrupt or invalid
 		'''
-		path = self.generatePath(id_user)
+		path = self.generatePath(identifier)
 		
 		try:
 			file_manage = open(path, "w+")
@@ -52,40 +53,40 @@ class fileHandler:
 			print(f'Console: caching experienced {e}')
 			return False
 		
-		#no exceptions were encountered, run sucessful
+		# no exceptions were encountered, run successful
 		return True
 		
-	def lookupCachedFile(self, id_user):
+	def lookup_cached_file(self, identifier):
 		'''
 			(fileHandler, string) -> (list of strings)
 		
-			@paramaters a user-id that is chached is provided
+			@paramaters a user-id that is cached is provided
 			@returns a list of strings, each index representing a new line
 			@exception returns an empty list if the file doesn't exist
 		'''
-		path = self.generatePath(id_user)
-		data = []
+		path = self.generatePath(identifier)
 		
 		try:
 			file_manage = open(path, "r")
-			data = file_manage.read().splitlines() #splits each line based on the '\n' opp.
+			data = file_manage.read().splitlines()  # splits each line based on the '\n' opp.
 			file_manage.close()
-		except:
-			return data #will return an empty list
+		except Exception as e:
+			print(f'Console: caching experienced {e}')
+			return []  # will return an empty list
 			
 		return data
 		
-	def lookupCachedFileString(self, id_user):
+	def lookup_cached_file_string(self, identifier):
 		'''
 			(fileHandler, string) -> (string)
 			
-			@paramaters a user-id that is chached is provided
+			@paramaters a user-id that is cached is provided
 			@returns the cached file as a string
 			@exception returns an empty string if the file doesn't exist
 		'''
-		return '\n'.join(self.lookupCachedFile(id_user))
+		return '\n'.join(self.lookupCachedFile(identifier))
 	
-	def lookupChachedFileElement(self, id_user):
+	def lookup_cached_file_element(self, identifier):
 		'''
 			(fileHandler, string) -> (boolean)
 			
@@ -94,25 +95,26 @@ class fileHandler:
 			@exception returns boolean false if it is not in the file
 		'''
 		try:
-			temp_list = self.lookupCachedFile(id_user)
-			temp_list.pop(id_user) #will error if it does not exist
-		except:
+			temp_list = self.lookupCachedFile(identifier)
+			temp_list.pop(identifier)  # will error if it does not exist
+		except Exception as e:
+			print(f'Console: caching experienced {e}')
 			return False
 		
-		#if it did not error, the user-id must exist
+		# if it did not error, the user-id must exist
 		return True
 			
-	def appendCachedFile(self, id_user, message):
+	def append_cached_file(self, identifier, message):
 		'''
 			(fileHandler, string, string) -> (boolean)
 			
 			@paramaters a valid user-id was provided
 			@returns boolean true if the message paramater was
 					 appended to the cache file
-			@exceotion returns boolean false if the data was not
+			@exception returns boolean false if the data was not
 					   written
 		'''
-		path = self.generatePath(id_user)
+		path = self.generatePath(identifier)
 		
 		try:
 			file_manage = open(path, "a")
@@ -122,10 +124,10 @@ class fileHandler:
 			print(f'Console: caching experienced {e}')
 			return False
 		
-		#no exceptions were encountered, run sucessful
+		# no exceptions were encountered, run successful
 		return True
 	
-	def deleteCachedFiled(self, id_user):
+	def delete_cached_file(self, identifier):
 		'''
 			(fileHandler) -> (boolean)
 			
@@ -133,46 +135,47 @@ class fileHandler:
 			@exception returns boolean false if the file was not
 					   deleted from the cache folder
 		'''
-		path = self.generatePath(id_user)
+		path = self.generatePath(identifier)
 		
 		try:
-			remove(path) #linked to os.remove
-		except:
+			remove(path)  # linked to os.remove
+		except Exception as e:
+			print(f'Console: caching experienced {e}')
 			return False
 			
-		#no exceptions were encountered, run sucessful
+		# no exceptions were encountered, run successful
 		return True
 	
-	def deleteCachedElement(self, id_user, element):
+	def delete_cached_element(self, identifier, element):
 		'''
 			(fileHandler) -> (boolean)
 			
 			@paramaters a valid user-id is provided
-			@returns boolean true if the data embeded within the
+			@returns boolean true if the data embedded within the
 					 cache file that matched the 'element' param
-					 was exclusivly removed from the file
+					 was exclusively removed from the file
 			@exception returns boolean false if the paramaters
 					   were not met
 					
 			** if the element d.n.e will return true still **
 		'''
-		#grab the data currently stored within the cache file
-		data = self.lookupCachedFile(id_user)
-		i = data.index(element) #index the element we want to remove
-		print(i)
+		# grab the data currently stored within the cache file
+		data = self.lookupCachedFile(identifier)
+		i = data.index(element)  # index the element we want to remove
 		data.pop(i)
 		
-		path = self.generatePath(id_user)
+		path = self.generatePath(identifier)
 		
 		try:
 			file_manage = open(path, 'w')
 			for line in range(0, len(data)):
-				file_manage.write(data[line]) #write the data back into the file
+				file_manage.write(data[line])  # write the data back into the file
 			file_manage.close()
-		except:
+		except Exception as e:
+			print(f'Console: caching experienced {e}')
 			return False
 		
-		#no exceptions were encountered, run sucessful
+		# no exceptions were encountered, run successful
 		return True
 	
 	def __del__(self):
