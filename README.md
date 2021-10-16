@@ -1,4 +1,4 @@
-# Venezia
+# py-acyclic-network
 This project has been active since September 2019.
 
 ## Description
@@ -16,23 +16,24 @@ Venezia is a pythonic framework for developing decentralized networks, providing
 ### Dependencies
 Development and testing done with Python >= 3.7.9, other packages required to run the CLI and web-portal include:
 
-* pycryptodomex=3.10.1
-* clint=0.3.2
-* pyyaml=5.4.1
-* flask=2.0.1
+* pycryptodomex==3.10.1
+* clint==0.5.1
+* pyyaml==5.4.1
+* cffi==1.15.0
+* pyfiglet==0.8.post1
 
 ### Installation
 As of right now, the only way to install the program is to create a local pip installation.
 
 * Navigate to the root folder.
 
-	```python -m build```
+	```python install -r requirements.txt```
 
 	```pip3 install .```
 
 * Validate the installation
 
-	```pip3 show acyclicnet```
+	```pip3 show pyacyclicnet```
 	
 	###### If the installation is valid, pip will return information about the installed package.
 
@@ -41,9 +42,9 @@ As of right now, the only way to install the program is to create a local pip in
 ### Further Reading
 This README.md is limited to avoid overloading you with information. If you want to understand some of the decisions behind the design or how to contribute, these resources can help to get you started.
 
-* [Documentation](https://github.com/GabeCordo/venezia/tree/master/docs/reference.md) - design explanations and how to set up your network.
-* [Framework](https://github.com/GabeCordo/venezia/tree/master/docs/functions.md) - available functions, paramaters, use-cases. 
-* [Standards](https://github.com/GabeCordo/venezia/tree/master/docs/standards.md) - read this before contributing to the project.
+* [Documentation](https://github.com/GabeCordo/py-acyclic-network/tree/master/docs/reference.md) - design explanations and how to set up your network.
+* [Framework](https://github.com/GabeCordo/py-acyclic-network/tree/master/docs/functions.md) - available functions, paramaters, use-cases. 
+* [Standards](https://github.com/GabeCordo/py-acyclic-network/tree/master/docs/standards.md) - read this before contributing to the project.
 
 ## Credits
 
