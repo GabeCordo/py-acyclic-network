@@ -8,6 +8,7 @@ from threading import Thread
 from typing import Tuple
 
 import traceback
+from pyacyclicnet.core.types.request import Request
 
 ###############################
 # global imports
@@ -21,12 +22,13 @@ from pyacyclicnet.utils import logging
 
 from pyacyclicnet.core.crypto import rsa
 from pyacyclicnet.core.timing.stopwatch import StopWatch
-from pyacyclicnet.core.types import enums
+from pyacyclicnet.core.types.enums import RequestCode, RequestTableLifetime, ReturnCode, EnqueueRequest, DoYouKnowOption, ProcessDataStatus
 from pyacyclicnet.core.types.containers import Addresses, Paths, Customizations
 from pyacyclicnet.core.types.result import Result
 from pyacyclicnet.core.types.requestqueue import RequestQueue
 from pyacyclicnet.core.types.responsehashtable import ResponseHashTable
-from pyacyclicnet.core.types.errors import IllegalRequest
+from pyacyclicnet.core.types.errors import CorruptedMessage, IllegalRequest, EncryptionFailed, NoResponseNeeded, MismatchedSyntax
+from pyacyclicnet.core.bitstream.parser import ProtocolParser
 
 ###############################
 # constants
@@ -72,6 +74,9 @@ class Node:
 		
 		# Initialize the encryption handler
 		self.handler_keys = rsa.Handler(container_paths.directory_key_private, container_paths.directory_key_public)
+  
+		# Initialize the parser handler
+		self.bitstream_parser = ProtocolParser()
 		
 		# Setup logging file for connection speed data
 		logging.Logger(container_paths.directory_file_logging, container_customizations.supports_console_cout)
@@ -119,11 +124,11 @@ class Node:
 			child classes can override this function to offer special functionality
 			to the listening aspect of the server
 			
-			@returns a boolean value representing whether to enqueue message
+			@returns Result((Enqueue Request, Raw Data), Exception)
 		"""
 		raise NotImplementedError
 	
-	def special_functionality_error(self, status: Exception) -> enums.ReturnCode:
+	def special_functionality_error(self, status: Exception) -> ReturnCode:
 		"""
 			child classes can override this function to offer special functionality
 			to processing and re-writing the errors processed by the node
@@ -163,6 +168,7 @@ class Node:
 				else:
 					pre_message = b'None'
 				optimizer.lap()
+				print(pre_message)
 				c.send(pre_message)  # send the encryption key or None indicating it's disabled
 				optimizer.lap()
 				
@@ -203,31 +209,76 @@ class Node:
 				if self.container_customizations.supports_encryption:
 					# we need to individually decrypt each message and then join it
 					for i in range(0, len(ciphertexts)):
-						# decrypt the cypher text and place it into a temp holder
-						ciphertexts[i] = self.handler_keys.decrypt(ciphertexts[i])
+						# the deciphered value will be placed into a Result() object -- see if the function failed
+						temp = self.handler_keys.decrypt(ciphertexts[i])
+						if temp.is_valid():
+							ciphertexts[i] = temp.value()
+						else:
+							c.close()
+							raise EncryptionFailed
 				else:
 					# we need to individually decode the utf-8 bitstream into plain text
 					for i in range(0, len(ciphertexts)):
 						ciphertexts[i] = ciphertexts[i].decode()
-					
-				plaintext_request = ''.join(ciphertexts)
 				
-				# allow child classes to manipulate the message
-				data_processed = self.special_functionality(plaintext_request, addr[0])
+				# the encrypted text is sitting within a list after being decrypted, we need
+				# to do a quick join in order to read the full protocol message and send it
+				# into the parser
+				plaintext_request = ''.join(ciphertexts)
+				print(plaintext_request)  # debug
+				
+				# parse the raw plaintext into a request object so we can easily manipulate it
+				# and pull data with pre-defined functions
+				tmp_packet = self.bitstream_parser.parse(plaintext_request)
+				if tmp_packet.is_valid():
+					protocol_packet = tmp_packet.value()
+				else:
+					c.close()
+					raise MismatchedSyntax
+
+				raw_data_processed = None
+				# apply a 'switch' case over the request in comparision to the known request ints
+				if protocol_packet.request == RequestCode.PING_SERVER:
+					raw_data_processed = Result((EnqueueRequest.PROCESSES, "Okay"), None)
+				elif protocol_packet.request == RequestCode.SEND_DATA:
+					raw_data_processed = self.special_functionality(plaintext_request, addr[0])
+				elif protocol_packet.request == RequestCode.SEND_DATA_NO_RESPONSE:
+					self.special_functionality(plaintext_request, addr[0])
+					c.close()
+					raise NoResponseNeeded
+				elif protocol_packet.request == RequestCode.RELAY_FOLLOWUP:
+					# the nonce should be passed into the data segment of the request, use
+					# the nonce to grab the return value of the request
+					nonce = protocol_packet.nonce
+					if self.socket_request_hash_table.get_request_code(nonce) is RequestTableLifetime.RESPONDED:
+						raw_data_processed = self.socket_request_hash_table.get_return_value(nonce)
+					else:
+						raw_data_processed = ""
+				elif protocol_packet.request == RequestCode.DO_YOU_KNOW:
+					if protocol_packet.data == DoYouKnowOption.IP_BACKUP_INDEX:
+						raw_data_processed = self.container_addresses.ip_backup
+					else:
+						raw_data_processed = self.container_addresses.ip_index	
+				else:
+					# we leave the implementation up to the developer
+					raw_data_processed = self.special_functionality(plaintext_request, addr[0])
+    
+				data_processed = None
 				# check to see if we are returned valid data or an error
-				if not data_processed.is_valid():
-					# TODO - what do we do if the data is not valid?
-					pass
+				if raw_data_processed.is_valid():
+					data_processed = raw_data_processed.value()
+				else:
+					raise IllegalRequest
 				
 				print(f'Console: processed data')  # console logging
 				print(data_processed)  # debugging
 				
-				# send the response code that will alert the sender whether to listen for future
-				# response data associated with the request sent to the "server"
-				c.send(data_processed.value()[1].encode())
+				# inform the sending node if we want to continue sending data (likely encrypted)
+				# or we will be shutting down the node, the status code is behind a EnumInt in a tuple index 0
+				c.send(str(int(data_processed[0])).encode())
 				
 				# return the data to the user
-				if data_processed.value()[0] == enums.EnqueueRequest.PROCESSES:
+				if data_processed[0] is EnqueueRequest.PROCESSES:
 					
 					data_processed_lst = []
 					permitted_char_len = 100  # the max number of chars allowed per bitstream (RSA maximum)
@@ -247,7 +298,13 @@ class Node:
 							
 							# encrypt and append to the list of message segments to send that are encrypted
 							temp = self.handler_keys.encrypt(data_processed[1][beginning:end], public_rsa)
-							data_processed_lst.append(temp)
+							# check the result class, if we are returned an Error it means the encryption is broken and close
+							# the socket before we send an erroneous message to the server and confuse it.
+							if temp.is_valid():
+								data_processed_lst.append(temp.value())
+							else:
+								c.close()
+								raise EncryptionFailed
 							
 							# append the number of chars that remain within the message
 							remaining_chars += permitted_char_len
@@ -255,11 +312,15 @@ class Node:
 						# append the final part of the message to the list
 						beginning = remaining_chars - permitted_char_len
 						temp = self.handler_keys.encrypt(data_processed[1][beginning:], public_rsa)
-						data_processed_lst.append(temp)
+						if temp.is_valid():
+							data_processed_lst.append(temp.value())
+						else:
+							c.close()
+							raise EncryptionFailed
 							
 					else:
 						
-						data_processed_lst.append(bytes(data_processed[1], 'utf-8'))
+						data_processed_lst.append(bytes(data_processed[1], encoding='utf8'))
 					
 					data_processed_lst.append(b'<<')  # add the message transfer terminator
 					
@@ -276,11 +337,12 @@ class Node:
 					print(f'Console: sent response')  # console logging
 					
 				# append to the message queue if required for further functionality
-				elif data_processed.value()[0] == enums.EnqueueRequest.QUEUE:
+				elif data_processed.value()[0] == EnqueueRequest.QUEUE:
 					self.socket_request_queue.push(plaintext_request)
 				
 			except Exception as e:
-				processed_error = self.special_functionality_error(e)
+				print(traceback.format_exc())  # debugging
+				processed_error = ""  #  TODO: self.special_functionality_error(e)
 				print(f'Console: There was a problem during execution ({processed_error})')
 			
 			# close the connection with the connector
@@ -296,7 +358,7 @@ class Node:
 			# ensure the socket is closed
 			self.incoming.close()
 	
-	def send(self, ip_target="127.0.0.1", request=enums.RequestCode.PING_SERVER, message=None, port=PARAM_EMPTY_PORT) \
+	def send(self, ip_target="127.0.0.1", request=RequestCode.PING_SERVER, message=None, port=PARAM_EMPTY_PORT) \
 		-> Result(str, Exception):
 		"""
 			sends a bitstream to another Node.
@@ -318,16 +380,13 @@ class Node:
 			# if we are sending an explicit message to a server node, we need to have the
 			# the message param as a non-None value (every other enum type needs data except
    			#  for the PING_SERVER value)
-			if request is not enums.RequestCode.PING_SERVER and message is None:
+			if request is not RequestCode.PING_SERVER and message is None:
 				return Result(None, IllegalRequest)
-				
+			if request is RequestCode.PING_SERVER:
+				message = "1::0::0::0::0::1<><>"
+			
 			optimizer = StopWatch(6)  # we will use this to capture time between data captures to offer the best latency
 			outgoing.connect((ip_target, port))  # all outgoing requests are sent on port 8075
-				
-			# if we leave the string empty we are asking for a simple ping of the listening
-			# server so if we establish connection return '1' and end everything else
-			if message == enums.ReturnCode.PING_SERVER:
-				return enums.ReturnCode.PING_SERVER
 
 			optimizer.lap()  # finish measuring the time it takes to connect to the client
 			received_rsa_public = outgoing.recv(REQUEST_BYTE_SIZE).decode()
@@ -336,7 +395,7 @@ class Node:
 			key_pub_ours = self.handler_keys.get_public_key()
 			if received_rsa_public != 'None':
 				outgoing.send(bytes(key_pub_ours))  # send public key for any responses
-				
+			
 			message_lst = []
 			print(f'Console: Time difference - {optimizer.get_log()}')
 				
@@ -353,19 +412,29 @@ class Node:
 					end = remaining_chars
 						
 					# encrypt and append to the list of message segments to send that are encrypted
-					temp = self.handler_keys.encrypt(message[beginning:end], bytes(received_rsa_public))
-					message_lst.append(temp)
+					temp = self.handler_keys.encrypt(message[beginning:end], bytes(received_rsa_public, encoding='utf8'))
+					# check the result class, if we are returned an Error it means the encryption is broken and close
+					# the socket before we send an erroneous message to the server and confuse it.
+					if temp.is_valid():
+						message_lst.append(temp.value())
+					else:
+						outgoing.close()
+						return Result(None, EncryptionFailed)
 						
 					# append the number of chars that remain within the message
 					remaining_chars += PARAM_PERMITTED_CHAR_LEN
 					
 				# append the final part of the message to the list
 				beginning = remaining_chars - PARAM_PERMITTED_CHAR_LEN
-				temp = self.handler_keys.encrypt(message[beginning:], bytes(received_rsa_public))
-				message_lst.append(temp)
+				temp = self.handler_keys.encrypt(message[beginning:], bytes(received_rsa_public, encoding='utf8'))
+				if temp.is_valid():
+					message_lst.append(temp)
+				else:
+					outgoing.close()
+					return Result(None, EncryptionFailed)
 						
 			else:
-				message_lst.append(bytes(message, 'utf-8'))
+				message_lst.append(bytes(message, encoding='utf8'))
 				
 			message_lst.append(b'<<')  # add the message transfer terminator
 				
@@ -376,78 +445,98 @@ class Node:
 			# already be in this form, and won't be able to be sent
 			for message_segment in message_lst:
 				sleep(delay)
-				outgoing.send(message_segment)
+				# check to see whether the message is a raw byte stream or wrapped in a Result object
+				# that might have been created from an encrypt() call
+				if isinstance(message_segment, Result):
+					if message_segment.is_valid():
+						outgoing.send(message_segment.value())
+					else:
+						# if it is in a Result() wrapper and an error, encryption failed or the message is corrupted - KILL
+						outgoing.close()
+						return Result(None, CorruptedMessage)
+				else:
+					# we have gotten to the end of the encrypted stream, meaning all that's left is the b'<<'
+					# segment that is not wrapped into the Result() class
+					outgoing.send(message_segment)	
 					
 			print(f'Console: Sent message')  # console logging
+   
+			# we may not care about the response of the server - or we do not plan to wait for any response
+			# that may hold up this sender node
+			
+			if (request is not RequestCode.SEND_DATA_NO_RESPONSE):
 				
-			# we are going to receive a response code back from the user after this possibly indicating some status
-			# code or will 'spit out' some sort of data associated with the request
+				# we are going to receive a response code back from the user after this possibly indicating some status
+				# code or will 'spit out' some sort of data associated with the request
 				
-			response_code = outgoing.recv(REQUEST_BYTE_SIZE)
-				
-			if response_code == b'1':
-				
-				# receive the cypher text from the connector
-				time_warning = time()  # keep track of the start (we want to avoid going over ~10 seconds)
+				response_code = outgoing.recv(REQUEST_BYTE_SIZE)
+				if response_code == b'1':
 					
-				ciphertexts = [outgoing.recv(REQUEST_BYTE_SIZE)]
-				i = 0
+					# receive the cypher text from the connector
+					time_warning = time()  # keep track of the start (we want to avoid going over ~10 seconds)
+						
+					ciphertexts = [outgoing.recv(REQUEST_BYTE_SIZE)]
+					i = 0
 
-				delay = optimizer.get_shortest_lap()
-				# start receiving data from the sending socket
-				while ciphertexts[i] != b'<<':  # loop until the terminating operator is reached
-					
-					sleep(delay)
-					ciphertexts.append(outgoing.recv(REQUEST_BYTE_SIZE))
+					delay = optimizer.get_shortest_lap()
+					# start receiving data from the sending socket
+					while ciphertexts[i] != b'<<':  # loop until the terminating operator is reached
 						
-					# ensure data collection has not exceeded 5 seconds
-					if (time() - time_warning) > 5.0:
-						print('Console: Closed Connection as Data Transfer Exceeded 5 seconds')
-						break
+						sleep(delay)
+						ciphertexts.append(outgoing.recv(REQUEST_BYTE_SIZE))
+							
+						# ensure data collection has not exceeded 5 seconds
+						if (time() - time_warning) > 5.0:
+							print('Console: Closed Connection as Data Transfer Exceeded 5 seconds')
+							break
+							
+						i += 1
+							
+					ciphertexts.pop()  # remove the null terminating character
 						
-					i += 1
+					print(f'Console: Received Ciphertext')  # console logging
 						
-				ciphertexts.pop()  # remove the null terminating character
-					
-				print(f'Console: Received Ciphertext')  # console logging
-					
-				# we want to decrypt the message only if encryption is enabled otherwise it is
-				# in plain-text and decrypting it will raise an error
-				if received_rsa_public != 'None':
-					# we need to individually decrypt each message and then join it
-					for i in range(0, len(ciphertexts)):
-						# decrypt the cypher text and place it into a temp holder
-						ciphertexts[i] = self.handler_keys.decrypt(ciphertexts[i])
+					# we want to decrypt the message only if encryption is enabled otherwise it is
+					# in plain-text and decrypting it will raise an error
+					if received_rsa_public != 'None':
+						# we need to individually decrypt each message and then join it
+						for i in range(0, len(ciphertexts)):
+							# decrypt the cypher text and place it into a temp holder
+							tmp_plaintext = self.handler_keys.decrypt(ciphertexts[i])
+							if tmp_plaintext.is_valid():
+								ciphertexts[i] = tmp_plaintext.value()
+							else:
+								return (None, CorruptedMessage)
+					else:
+						# we need to individually decode the utf-8 bitstream into plain text
+						for i in range(0, len(ciphertexts)):
+							ciphertexts[i] = ciphertexts[i].decode()
+							
+					response = ''.join(ciphertexts)  # join the decoded ciphertexts
+						
+					print(f'Console: Formatted cypher to plain text')  # console logging
+						
+					# if we receive a status code of '0' that means something went wrong
+					if response == '400':
+						# if there is default to returning an empty string
+						outgoing.close()
+						return 'Error 400: Bad Request'
+					else:
+						# the bitstream was successfully sent, we received usefully information from
+						# the server we may need to process (it might be a response)
+						outgoing.close()
+						return response
+				
 				else:
-					# we need to individually decode the utf-8 bitstream into plain text
-					for i in range(0, len(ciphertexts)):
-						ciphertexts[i] = ciphertexts[i].decode()
-						
-				response = ''.join(ciphertexts)  # join the decoded ciphertexts
-					
-				print(f'Console: Formatted cypher to plain text')  # console logging
-					
-				# if we receive a status code of '0' that means something went wrong
-				if (response is None) or (response == '400'):
-					# if there is default to returning an empty string
+
 					outgoing.close()
-					return 'Error 400: Bad Request'
-				else:
-					# the bitstream was successfully sent, we received usefully information from
-					# the server we may need to process (it might be a response)
-					outgoing.close()
-					return response
-			
+					return response_code.decode()
+
+			# We do not want to wait for a response so we will close the socket to open the socket
+			# for the next message the node might want to send out
 			else:
-					
-				if response_code == b'0':
-					print(f'Console: (Code 0) General Failure')
-				elif response_code == b'2':
-					print(f'Console: (Code 2) Transfer Failure')
-						
 				outgoing.close()
-				return None
-			
+    
 		except Exception as e:
 			print(f'Console: Experienced Error {e}')  # debugging
 			print(traceback.format_exc())  # debugging

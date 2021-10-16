@@ -43,7 +43,9 @@ class Handler:
 				check_pathway = open(directory_key_public, 'r')
 				check_pathway.close()
 		except FileNotFoundError:
-			pass  # TODO - implement a log error
+			# the keys do not exist at the directory path that was supplied, we need
+			# to create our keys here elsewise our encrypt/decrypt functions will break
+			self.generate_key_set()
 			
 		# instance variables
 		self.__private_key = ''
@@ -112,7 +114,7 @@ class Handler:
 		# generate a new private key, store it in the placeholder variable and place it into the directory
 		try:
 			key_private = key.export_key()
-			write_to_file = open(self.directory_key_private, 'wb')
+			write_to_file = open(self.directory_key_private, 'ab+')
 			write_to_file.write(key_private)
 			write_to_file.close()  # close the file handler
 			self.__private_key = key_private
@@ -121,7 +123,7 @@ class Handler:
 		# generate a new public key, store it in the placeholder variable and place it into the directory
 		try:
 			key_public = key.publickey().export_key()
-			write_to_file = open(self.directory_key_public, 'wb')
+			write_to_file = open(self.directory_key_public, 'ab+')
 			write_to_file.write(key_public)
 			write_to_file.close()  # close the file handler
 			self.__public_key = key_public

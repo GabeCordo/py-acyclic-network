@@ -1,6 +1,6 @@
-from pyacyclicnet.core.types import enums
-from pyacyclicnet.core.bitstream.basic import BasicParser
-from datetime import datetime
+from pyacyclicnet.core.types.enums import RequestTableLifetime
+from pyacyclicnet.core.bitstream.parser import ProtocolParser
+from datetime import date, datetime
 from pyacyclicnet.core.types.result import Result
 
 RESPONSE_TIME_THRESHOLD = 600
@@ -25,19 +25,18 @@ class ResponseHashTable:
 		else:
 			return True
 
-	def insert_request(self, request: BasicParser, lifetime: enums.RequestTableLifetime) -> bool:
+	def insert_request(self, packet: ProtocolParser, lifetime: RequestTableLifetime) -> bool:
 		"""
 		"""
-		if request is None:
+		if packet is None:
 			return False
-		if self.__validate_nonce(request.nonce):
-			self.__table[request.nonce] = [
-				request.origin,
-				request.destination,
-				request.requestCode,
-				request.returnValue,
-				datetime.now(),
-				lifetime
+		if self.__validate_nonce(packet.nonce):
+			self.__table[packet.nonce] = [
+				packet.next_ip,  # destination
+				packet.request,  # the request code given to the node
+				None,			 # this will be the response of the request 
+				datetime.now(),  # the timestamp when the request was put into the table
+				lifetime		 # the lifetime that this entry will sit in the table
 			]
 		else:
 			return False
@@ -51,11 +50,11 @@ class ResponseHashTable:
 			@exception returns an empty string if there is no nonce or value
 		"""
 		try:
-			return Result(self.__table[nonce][3], None)  # index 3 is the response value
+			return Result(self.__table[nonce][2], None)  # index 3 is the response value
 		except Exception as e:
 			return Result(str, e)
 
-	def get_identifiers(self, nonce: str) -> Result(tuple(), Exception):
+	def get_request_destination(self, nonce: str) -> Result(str, Exception):
 		"""
 			grab the origin and destination values of the nonce request
 
@@ -63,9 +62,7 @@ class ResponseHashTable:
 			@exception returns None if the nonce doesn't exist in the table
 		"""
 		try:
-			temp_origin = self.__table[nonce][0]
-			temp_destination = self.__table[nonce][1]
-			return Result((temp_origin, temp_destination), None)  # index 3 is the response value
+			return Result(self.__table[nonce][0], None)  # index 0 is the request destination
 		except Exception as e:
 			return Result(None, e)
 
@@ -77,7 +74,7 @@ class ResponseHashTable:
 			@exception returns an arbitrate integer 999 if no nonce request exists
 		"""
 		try:
-			return Result(self.__table[nonce][2], None)  # index 2 is the request code
+			return Result(self.__table[nonce][1], None)  # index 2 is the request code
 		except Exception as e:
 			return Result(None, e)
 
@@ -90,7 +87,7 @@ class ResponseHashTable:
 			@exception returns None if the nonce request doesn't exists
 		"""
 		try:
-			return Result(self.__table[nonce][4],
+			return Result(self.__table[nonce][3],
 						  None)  # index 4 is the timestamp for when the request was added to the table
 		except Exception as e:
 			return Result(None, e)
@@ -105,16 +102,16 @@ class ResponseHashTable:
 		if not self.__validate_nonce(nonce):
 			# if the nonce doesn't exist we don't want the program crashing
 			try:
-				code = self.__table[nonce][5]
+				code = self.__table[nonce][4]
 				flag = False  # flag representing if the nonce was deleted
-				if code == enums.RequestTableLifetime.RESPONDED:
+				if code == RequestTableLifetime.RESPONDED:
 					if self.get_return_value(nonce) != "":
 						flag = True
-				elif code == enums.RequestTableLifetime.TIME:
-					if TIME_DIFFERENCE(self.__table[nonce][4]):
+				elif code == RequestTableLifetime.TIME:
+					if TIME_DIFFERENCE(self.__table[nonce][3]):
 						flag = True
-				elif code == enums.RequestTableLifetime.RESPONDED_TIME:
-					if TIME_DIFFERENCE(self.__table[nonce][4]) and self.get_return_value(nonce) != "":
+				elif code == RequestTableLifetime.RESPONDED_TIME:
+					if TIME_DIFFERENCE(self.__table[nonce][3]) and self.get_return_value(nonce) != "":
 						flag = True
 				if flag:
 					self.__table.pop(nonce)

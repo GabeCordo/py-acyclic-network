@@ -1,3 +1,6 @@
+import pathlib
+ROOT_PATH = str(pathlib.Path(__file__).parent.resolve())
+
 from pyacyclicnet.core.network.node import Node
 from pyacyclicnet.core.types import containers
 
@@ -11,8 +14,8 @@ addresses = containers.Addresses(
 )
 
 paths = containers.Paths(
-	directory_key_public='keys/public1.pem', 
- 	directory_key_private='keys/private1.pem',
+	directory_key_public=ROOT_PATH+'/index/private/public1.pem', 
+ 	directory_key_private=ROOT_PATH+'/index/private/private1.pem',
   	directory_file_logging='index/json/log_node1.json'
 )
 

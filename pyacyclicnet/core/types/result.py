@@ -24,7 +24,7 @@ class Result:
 
             @returns a boolean representing whether a non-exception value has been placed in the wrapper
         """
-        if self.__value_g is None:
+        if self.__value_g is not None:
             return True
         return False
 

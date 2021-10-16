@@ -13,7 +13,7 @@ class ProtocolParser:
         raw_metadata, raw_path, data = bitsream.split('<>')
         # we may run into the case that we were not supplied enough argument within the packet header
         # meaning that we are missing some key-pieces of data
-        if len(raw_metadata) < 5:
+        if len(raw_metadata) < 6:
             return Result(None, MismatchedSyntax)
 
         metadata = raw_metadata.split("::")
@@ -21,11 +21,12 @@ class ProtocolParser:
         # return the data in a packet object so that the calling section can call dependant functions
         return Result(
             Packet(
-            request=metadata[0],
+            request=int(metadata[0]),
             pat_id=metadata[1],
             pat_auth=metadata[2],
             next_node=metadata[3],
             idp_ip=metadata[4],
+            nonce=int(metadata[5]),
             ip_path=path,
             data=data
             ),
@@ -68,5 +69,5 @@ class ProtocolParser:
         
 if __name__ == '__main__':
     p = ProtocolParser()
-    result = p.parse('4::8::16::8::4<>8::8::8<>HelloFriend')
+    result = p.parse('4::8::16::8::4<>8::8::8::123424<>HelloFriend')
     print(result.value())

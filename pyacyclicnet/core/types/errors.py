@@ -27,6 +27,11 @@ class CorruptedMessage(Exception):
 	def __init__(self, message):
 		Exception.__init__(self, f'Generic Network Error: The message can not be decoded by the userid public RSA.')
 		self.message = message
+  
+class NoResponseNeeded(Exception):
+	def __init__(self, message):
+		Exception.__init__(self, f'Generic Network Error: No network response needed, kill the connection.')
+		self.message = message
 
 ##########################################
 # Security Network Errors
