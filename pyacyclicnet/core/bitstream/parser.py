@@ -1,6 +1,6 @@
-from src.core.types.packet import Packet
-from src.core.types.result import Result 
-from src.core.types.errors import MismatchedSyntax, SanitizerCleaningFailed, SanitizerRestoreFailed
+from pyacyclicnet.core.types.packet import Packet
+from pyacyclicnet.core.types.result import Result 
+from pyacyclicnet.core.types.errors import MismatchedSyntax, SanitizerCleaningFailed, SanitizerRestoreFailed
 
 class ProtocolParser:
 

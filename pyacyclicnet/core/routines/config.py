@@ -2,7 +2,7 @@
 #		   Python Imports
 #####################################
 
-from src.core.linker import linkerJSON
+from pyacyclicnet.core.linker import linkerJSON
 
 #####################################
 #		   MANAKIN CONFIGs

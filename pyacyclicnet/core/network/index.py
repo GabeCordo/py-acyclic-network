@@ -10,13 +10,13 @@ from threading import Thread
 # core imports
 ###############################
 
-from src.core.crypto import rsa
-from src.core.bitstream import basic
-from src.core.network.node import Node
-from src.core.linker import linkerJSON
-from src.core.types import errors, enums, containers
-from src.core.types.decorators import overrides
-from src.core.types.result import Result
+from pyacyclicnet.core.crypto import rsa
+from pyacyclicnet.core.bitstream import basic
+from pyacyclicnet.core.network.node import Node
+from pyacyclicnet.core.linker import linkerJSON
+from pyacyclicnet.core.types import errors, enums, containers
+from pyacyclicnet.core.types.decorators import overrides
+from pyacyclicnet.core.types.result import Result
 
 ###############################
 # main code

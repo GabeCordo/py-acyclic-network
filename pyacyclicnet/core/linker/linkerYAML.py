@@ -8,8 +8,8 @@ from yaml import load, dump
 # core imports
 ###############################
 
-from src.core.linker.linkerTemplate import Linker
-from src.core.types.decorators import implements
+from pyacyclicnet.core.linker.linkerTemplate import Linker
+from pyacyclicnet.core.types.decorators import implements
 
 ###############################
 # YAML LINKER Wrapper

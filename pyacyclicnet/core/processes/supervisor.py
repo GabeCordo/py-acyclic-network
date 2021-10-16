@@ -1,10 +1,10 @@
 from typing import Tuple
 import multiprocessing
 
-from src.core.processes.channel import Channel
-from src.core.types.enums import ProcessType, ProcessStrategies, ProcessRestart, ProcessSpecification
-from src.core.types.errors import ProcessLabelNotFound, ProcessLabelInvalid
-from src.core.types.result import Result
+from pyacyclicnet.core.processes.channel import Channel
+from pyacyclicnet.core.types.enums import ProcessType, ProcessStrategies, ProcessRestart, ProcessSpecification
+from pyacyclicnet.core.types.errors import ProcessLabelNotFound, ProcessLabelInvalid
+from pyacyclicnet.core.types.result import Result
 
 class Supervisor:
     def __init__(self, proc_strategies: ProcessStrategies) -> None:

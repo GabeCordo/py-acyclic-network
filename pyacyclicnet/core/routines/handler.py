@@ -8,7 +8,7 @@ from sys import path
 # core imports
 ###############################
 
-from src.core.linker import linkerYAML, linkerJSON
+from pyacyclicnet.core.linker import linkerYAML, linkerJSON
 
 ###############################
 #		 routine code

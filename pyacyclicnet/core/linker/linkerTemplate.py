@@ -9,7 +9,7 @@ from threading import Thread
 # core imports
 ###############################
 
-from src.core.types.result import Result
+from pyacyclicnet.core.types.result import Result
 
 ###############################
 # main code

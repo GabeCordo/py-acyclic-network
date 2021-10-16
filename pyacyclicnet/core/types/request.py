@@ -1,4 +1,4 @@
-from src.core.types.enums import RequestCode
+from pyacyclicnet.core.types.enums import RequestCode
 
 
 class Request:

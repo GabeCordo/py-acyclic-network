@@ -17,7 +17,7 @@
 # core imports
 ###############################
 
-from src.core.types import errors
+from pyacyclicnet.core.types import errors
 
 ###############################
 #		   main code

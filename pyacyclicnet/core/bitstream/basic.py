@@ -11,8 +11,8 @@
 # core imports
 ###############################
 
-from src.core.types.errors import MismatchedSyntax
-from src.core.types.result import Result
+from pyacyclicnet.core.types.errors import MismatchedSyntax
+from pyacyclicnet.core.types.result import Result
 
 ###############################
 # main code

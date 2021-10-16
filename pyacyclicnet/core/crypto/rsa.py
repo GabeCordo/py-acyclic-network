@@ -11,8 +11,8 @@ from six import binary_type, string_types
 # core imports
 ###############################
 
-from src.core.types.result import Result
-from src.core.types.errors import MismatchedKeys, MissingRSAKey, EncryptionFailed
+from pyacyclicnet.core.types.result import Result
+from pyacyclicnet.core.types.errors import MismatchedKeys, MissingRSAKey, EncryptionFailed
 
 ###############################
 # main code

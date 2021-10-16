@@ -1,5 +1,5 @@
 from posixpath import dirname
-from src import constants
+from pyacyclicnet import constants
 from os import walk
 
 class Searcher:

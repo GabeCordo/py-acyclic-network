@@ -2,9 +2,9 @@
 # core imports
 ###############################
 
-from src.core.bitstream import basic
-from src.core.network.node import Node
-from src.core.types import errors, enums, containers
+from pyacyclicnet.core.bitstream import basic
+from pyacyclicnet.core.network.node import Node
+from pyacyclicnet.core.types import errors, enums, containers
 
 ###############################
 #		   main code

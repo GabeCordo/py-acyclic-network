@@ -11,19 +11,19 @@ from typing import Tuple
 # global imports
 ###############################
 
-from src.utils import logging
+from pyacyclicnet.utils import logging
 
 ###############################
 # core imports
 ###############################
 
-from src.core.crypto import rsa
-from src.core.timing.stopwatch import StopWatch
-from src.core.types import enums
-from src.core.types.containers import Addresses, Paths, Customizations
-from src.core.types.result import Result
-from src.core.types.requestqueue import RequestQueue
-from src.core.types.responsehashtable import ResponseHashTable
+from pyacyclicnet.core.crypto import rsa
+from pyacyclicnet.core.timing.stopwatch import StopWatch
+from pyacyclicnet.core.types import enums
+from pyacyclicnet.core.types.containers import Addresses, Paths, Customizations
+from pyacyclicnet.core.types.result import Result
+from pyacyclicnet.core.types.requestqueue import RequestQueue
+from pyacyclicnet.core.types.responsehashtable import ResponseHashTable
 
 ###############################
 # constants

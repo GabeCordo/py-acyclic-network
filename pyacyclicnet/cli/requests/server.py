@@ -2,7 +2,7 @@
 #		   cli Imports
 #####################################
 
-from src.utils import fileHandler
+from pyacyclicnet.utils import fileHandler
 
 #####################################
 #		Server-Side Requests

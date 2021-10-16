@@ -1,4 +1,4 @@
-from src.core.types.request import Request
+from pyacyclicnet.core.types.request import Request
 
 Queue = list[Request]
 LinkerPath = str

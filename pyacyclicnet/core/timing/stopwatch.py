@@ -8,7 +8,7 @@ from time import time
 # core imports
 ###############################
 
-from src.core.timing.timer import Timer
+from pyacyclicnet.core.timing.timer import Timer
 
 ###############################
 #	    Stop Watch Class

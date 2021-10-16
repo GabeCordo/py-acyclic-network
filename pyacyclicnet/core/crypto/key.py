@@ -1,6 +1,6 @@
-from src.core.crypto import rsa
-from src.core.types import enums
-from src.core.types.result import Result
+from pyacyclicnet.core.crypto import rsa
+from pyacyclicnet.core.types import enums
+from pyacyclicnet.core.types.result import Result
 
 
 class Keys:

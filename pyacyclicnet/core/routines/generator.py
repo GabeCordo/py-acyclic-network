@@ -10,8 +10,8 @@ from sys import path
 #	   core imports
 ###############################
 
-from src.core.linker import linkerYAML
-from src.utils import errors, enums
+from pyacyclicnet.core.linker import linkerYAML
+from pyacyclicnet.utils import errors, enums
 
 ###############################
 #		generator code

@@ -1,7 +1,7 @@
 #####################################
 #		Client-Side Requests
 #####################################
-from src.utils import caching
+from pyacyclicnet.utils import caching
 
 ##		Whitelist Functions		##
 

@@ -2,11 +2,11 @@
 # core imports
 ###############################
 
-from src.core.network.node import Node
-from src.core.bitstream import advanced
-from src.core.types import errors, enums, containers
+from pyacyclicnet.core.network.node import Node
+from pyacyclicnet.core.bitstream import advanced
+from pyacyclicnet.core.types import errors, enums, containers
 
-from src.core.types.decorators import overrides
+from pyacyclicnet.core.types.decorators import overrides
 
 ###############################
 # main code

@@ -1,5 +1,5 @@
 from typing import Generic, TypeVar
-from src.core.types import errors
+from pyacyclicnet.core.types import errors
 
 T = TypeVar('T')
 

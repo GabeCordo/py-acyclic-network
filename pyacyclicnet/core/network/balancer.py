@@ -2,14 +2,14 @@
 # core imports
 ###############################
 
-from src.core.bitstream.basic import BasicParser
-from src.core.network.node import Node
-from src.core.linker.linkerJSON import LinkerJson
-from src.core.types.enums import EnqueueRequest
-from src.core.types import containers
+from pyacyclicnet.core.bitstream.basic import BasicParser
+from pyacyclicnet.core.network.node import Node
+from pyacyclicnet.core.linker.linkerJSON import LinkerJson
+from pyacyclicnet.core.types.enums import EnqueueRequest
+from pyacyclicnet.core.types import containers
 
-from src.core.types.result import Result
-from src.core.types.decorators import overrides
+from pyacyclicnet.core.types.result import Result
+from pyacyclicnet.core.types.decorators import overrides
 
 ###############################
 # main code

@@ -8,9 +8,9 @@ import cmd, os, sys
 # cli Imports
 #####################################
 
-from src.core.network import node
-from src.utils import containers, generator
-from src.cli.graphics import terminal
+from pyacyclicnet.core.network import node
+from pyacyclicnet.utils import containers, generator
+from pyacyclicnet.cli.graphics import terminal
 
 #####################################
 # Default Paramaters

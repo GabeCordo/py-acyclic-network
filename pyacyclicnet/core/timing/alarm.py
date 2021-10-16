@@ -10,8 +10,8 @@ from threading import Thread
 # core imports
 ###############################
 
-from src.core.timing.timer import Timer
-from src.core.timing.event import Event
+from pyacyclicnet.core.timing.timer import Timer
+from pyacyclicnet.core.timing.event import Event
 
 ###############################
 #	   	  Alarm Class

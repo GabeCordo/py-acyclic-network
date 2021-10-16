@@ -7,7 +7,7 @@
 ###############################
 
 from typing import Generic, Tuple
-from src.core.timing.timer import Timer
+from pyacyclicnet.core.timing.timer import Timer
 
 ###############################
 #		Container Class

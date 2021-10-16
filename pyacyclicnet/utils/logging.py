@@ -9,7 +9,7 @@ from datetime import datetime
 # core Imports
 #####################################
 
-from src.core.linker.linkerJSON import LinkerJson
+from pyacyclicnet.core.linker.linkerJSON import LinkerJson
 
 #####################################
 #  Constants

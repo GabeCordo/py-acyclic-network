@@ -1,7 +1,7 @@
-from src.core.types import enums
-from src.core.bitstream.basic import Parser
+from pyacyclicnet.core.types import enums
+from pyacyclicnet.core.bitstream.basic import Parser
 from datetime import datetime
-from src.core.types.result import Result
+from pyacyclicnet.core.types.result import Result
 
 RESPONSE_TIME_THRESHOLD = 600
 TIME_DIFFERENCE = lambda last_time: (datetime.now() - last_time).total_seconds() >= RESPONSE_TIME_THRESHOLD

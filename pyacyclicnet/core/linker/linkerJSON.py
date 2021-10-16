@@ -8,8 +8,8 @@ from json import dump, load
 # core imports
 ###############################
 
-from src.core.linker.linkerTemplate import Linker
-from src.core.types.decorators import implements
+from pyacyclicnet.core.linker.linkerTemplate import Linker
+from pyacyclicnet.core.types.decorators import implements
 
 ###############################
 # JSON LINKER Wrapper
