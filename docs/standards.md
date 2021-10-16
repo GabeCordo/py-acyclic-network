@@ -2,7 +2,7 @@
 These standards attempt to enforce consistency across the codebase to assist developers that wish to read or understand the source code.
 
 ## Naming Conventions
-All identifiers must follow these conventions to better identify types derived from scms.
+All identifiers must follow these conventions to better identify types derived from the package.
 
 1. CamelCase for all Classes and Functions
     1. N prefix for extensions of modules that manipulate the default network code.

@@ -1,4 +1,4 @@
-## Framework Documentation
+## Framework Documentation - *Outdated*
 As the framework is programmatically updated, primary functions and hooks can be found here. The goal being, to provide a quick-lookup spot for features that will assist in creating your decentralized architecture without needing to scrape through code. I encourage you to read over the documentation covering the overall-architectural decisions for classes and underlining functions as this document does not go beyond the scope of functionality.
 
 ---
