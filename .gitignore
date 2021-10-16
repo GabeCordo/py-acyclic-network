@@ -22,6 +22,6 @@ keys
 bin
 downloads
 build
-
+sss
 # un-needed builds
-acyclicnet.egg-info
+pyacyclicnet.egg-info
