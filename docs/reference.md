@@ -287,6 +287,31 @@ The information required on all author sheets follows:
 6. a short description on the functionality and purpose of the routine
 7. the licence associated with the routine for further modification/fair-use
 
+```
+data:
+	author:
+		name: First Last
+		email: first.last@domain.com
+		site: https://routine-direct.com
+		date: DD/MM/YYYY
+	routine:
+		name: RoutineName
+		version: 1.0
+		description: >
+			This description must identify the key features
+			and purpose to be approved as an official routine
+		licence: MIT 202N
+		keywords:
+			- tag1
+			- tag2
+			- tagN
+		classifiers:
+			- tag1
+			- tag2
+			- tagN
+		documentation: './docs/'
+```
+
 ### config sheet (YAML)
 The config sheet is a configuration data-sheet for socket configuration and routing standards. The config sheet must contain the data
 required parameters outlined within the Venezia Parent Node containers: Addresses, Paths and Customizations.
@@ -294,6 +319,56 @@ required parameters outlined within the Venezia Parent Node containers: Addresse
     The config sheet is flexible to additional configurations settings that must be outlined within the 'custom' section of the sheet.
     The routines class responsible for the creation/interpretation of the YAML sheets will store the additional information under the
     dictionary key 'custom'. It is the responsibility of scripts to utilize this within their python code.
+
+```
+config:
+	settings:
+		port: 5078
+		markup: Basic
+		return-codes:
+			- 0
+			- 1
+			- 2
+		buffer-size: 1024
+		latency-size: 4
+	addresses:
+		ip: 127.0.0.1
+		index: 127.0.0.1
+		backup: 127.0.0.1
+	paths:
+		rsa: './paths/keys/'
+		logging: './paths/logging/'
+		markup: './paths/markup'
+	customizations:
+		encryption: On
+		listening: On
+		monitoring: Off
+		recovery: On
+		console: Off
+		data-capture: Off
+		dynamic-interaction: Off
+		dynamic-keyset: Off
+	custom:
+		using-custom: Off
+		custom-settings:
+			- blank
+		custom-scripts:
+			- script1.py
+			- script2.py
+			- script3.py
+		markup-sheets:
+			- sheet1.mkdn
+			- sheet2.mkdn
+			- sheet3.mkdn
+```
+
+#### routine file (.PY)
+The standard python routine file can be found within the route directory of a routine package. This holds template functions that allow a custom piece of code to interact with the rest of the pyacylicnet framework.
+
+##### Hook Functions
+1. configure
+2. metadata
+2. run
 
 #### scripts directory (.PY)
 The scripts directory provides specialty functions for handling data-manipulation of packets stored within the queue

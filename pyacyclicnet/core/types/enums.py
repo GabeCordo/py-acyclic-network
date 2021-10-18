@@ -90,7 +90,7 @@ class ProcessDataStatus(IntEnum):
     FAILED = 0
     SUCCESS = 1
 
-class Serialize(IntEnum):
+class SerializeTo(IntEnum):
 	JSON = 0
 	YAML = 1
 

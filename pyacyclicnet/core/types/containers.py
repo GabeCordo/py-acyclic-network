@@ -1,107 +1,113 @@
+from dataclasses import dataclass, field
+
+###############################
+#	Container Constants
+###############################
+
+MAX_PRINT_BOX_SIZE = 30
+ASCII_BORDER = " " + "-"*(MAX_PRINT_BOX_SIZE - 1)
+
+###############################
+#	   Container Lambdas
+###############################
+
+ascii_space_ending = lambda data, used_space : " " * (MAX_PRINT_BOX_SIZE - (len(data) + used_space)) + "|"
+
 ###############################
 #	IP Address Indexing
 ###############################
 
+@dataclass
 class Addresses:
-    def __init__(self, ip, port, ip_index=None, ip_backup=None):
-        '''(String, int, String, String) -> None
-			:a container class for ip-addresses and standard indexes for the
-			 Node socket parent-class
-		'''
-        self.ip = ip
-        self.port = port
-        self.ip_index = ip_index
-        self.ip_backup = ip_backup
+	ip:str = ''
+	port:int = 23245
+	ip_index:str = ''
+	ip_backup:str = ''
+
+	def __str__(self):
+		print(ASCII_BORDER)
+		print("| ip: "	+ self.ip + ascii_space_ending(self.ip, 6))
+		print(ASCII_BORDER)
+		print("| port: " + str(self.port) + ascii_space_ending(str(self.port), 8))
+		print("| index: " + self.ip_index + ascii_space_ending(self.ip_index, 9))
+		print("| backup: " + self.ip_backup + ascii_space_ending(self.ip_backup, 10))
+		print(ASCII_BORDER)
 
 
 ###############################
 #	JSON/RSA Paths Container
 ###############################
 
+@dataclass
 class Paths:
-    def __init__(self, directory_key_public, directory_key_private, directory_file_logging):
-        '''
-			(String, String, String) -> None
-			:a container class for JSON and public key directories required for encrypting
-			 packet traffic and logging latency data for tracking (respectively)
-		'''
-        self.directory_key_public = directory_key_public
-        self.directory_key_private = directory_key_private
-        self.directory_file_logging = directory_file_logging
+	directory_key_public:str
+	directory_key_private:str
+	directory_file_logging:str
 
 
 ###############################
 #	Customization Container
 ###############################
 
+@dataclass
 class Customizations:
-    def __init__(self, supports_encryption=True, supports_listening=True,
-                 supports_monitoring=True, supports_dynamic_interaction=True,
-                 supports_recovery=True, supports_console_cout=False,
-                 supports_data_capture=False, supports_dynamic_keyset=True,
-                 supports_backup_ip=False):
-        '''
-			(bool, bool, bool, bool, bool, bool)
-			:a container class for all the various customization options for the Node class
-			 so that it can be used across multiple Node without redundant hardcoding
-		'''
-        self.supports_encryption = supports_encryption
-        self.supports_listening = supports_listening
-        self.supports_monitoring = supports_monitoring
-        self.supports_backup_ip = supports_backup_ip
-        self.supports_recovery = supports_recovery
-        self.supports_console_cout = supports_console_cout
-        self.supports_data_capture = supports_data_capture
-        self.supports_dynamic_interaction = supports_dynamic_interaction
-        self.supports_dynamic_keyset = supports_dynamic_keyset
+	supports_encryption:bool = True
+	supports_listening:bool = True
+	supports_monitoring:bool = True
+	supports_backup_ip:bool = False
+	supports_recovery:bool = True
+	supports_console_cout:bool = False
+	supports_data_capture:bool = False
+	supports_dynamic_interaction:bool = True
+	supports_dynamic_keyset:bool = True
 
 
 ## PRE-SET CUSTOMIZATIONS FOR ROUTING NODES
 
 NODE_SETTINGS_DEFAULT = Customizations(
 	supports_encryption = True,	
-    supports_listening = True,
-    supports_monitoring = True,
-    supports_backup_ip = False,
-    supports_recovery = False,
-    supports_console_cout = True,
-    supports_data_capture = True,
-    supports_dynamic_interaction = False,
-    supports_dynamic_keyset = True,
+	supports_listening = True,
+	supports_monitoring = True,
+	supports_backup_ip = False,
+	supports_recovery = False,
+	supports_console_cout = True,
+	supports_data_capture = True,
+	supports_dynamic_interaction = False,
+	supports_dynamic_keyset = True,
 )
 
 PRESET_SETTINGS_ENTRY = Customizations(
-    supports_encryption=True,
-    supports_listening=True,
-    supports_monitoring=False,
-    supports_recovery=True,
-    supports_console_cout=False
+	supports_encryption=True,
+	supports_listening=True,
+	supports_monitoring=False,
+	supports_recovery=True,
+	supports_console_cout=False
 )
 
 PRESET_SETTINGS_BALANCER = Customizations(
-    supports_encryption=True,
-    supports_listening=True,
-    supports_monitoring=False,
-    supports_recovery=False,
-    supports_console_cout=False
+	supports_encryption=True,
+	supports_listening=True,
+	supports_monitoring=False,
+	supports_recovery=False,
+	supports_console_cout=False
 )
 
 PRESET_SETTINGS_INDEX = PRESET_SETTINGS_BALANCER
 
 PRESET_SETTINGS_RELAY = Customizations(
-    supports_encryption=False,
-    supports_listening=True,
-    supports_monitoring=True,
-    supports_recovery=True,
-    supports_console_cout=False
+	supports_encryption=False,
+	supports_listening=True,
+	supports_monitoring=True,
+	supports_recovery=True,
+	supports_console_cout=False
 )
 
 PRESET_SETTINGS_EXIT = Customizations(
-    supports_encryption=False,
-    supports_listening=True,
-    supports_monitoring=True,
-    supports_recovery=False,
-    supports_console_cout=False
+	supports_encryption=False,
+	supports_listening=True,
+	supports_monitoring=True,
+	supports_recovery=False,
+	supports_console_cout=False
 )
 
 
@@ -109,36 +115,28 @@ PRESET_SETTINGS_EXIT = Customizations(
 #	 Routine Configuration
 ###############################
 
+@dataclass
 class RoutineAuthor:
-    def __init__(self, author_name='', author_email='', author_site='',
-                 date='', name='Unnamed Routine', version=1.0, description='',
-                 licence=None, keywords=None, classifiers=None, documentation=None):
-        '''
-			(String, String, String, String, String, Int, String, String, List, List, String) -> None
-			:a container class for the contents of the author file. This is to categorize
-			 developer and routine details that contribute to the documentation of a routine
-			 rather than the functionality of the package.
-		'''
-        self.author_name = author_name
-        self.author_email = author_email
-        self.author_site = author_site
-        self.date = date
-        self.name = name
-        self.version = version
-        self.description = description
-        self.licence = licence
-        self.keywords = keywords
-        self.classifiers = classifiers
-        self.documentation = documentation
+	keywords:list = field(default_factory=list)
+	classifiers:list = field(default_factory=list)
+	documentation:list = field(default_factory=list)
+	author_name:str = ''
+	author_email:str = ''
+	author_site:str = ''
+	date:str = ''
+	name:str = ''
+	version:float = 1.0
+	description:str = ''
+	licence:str = ''
 
 
+@dataclass
 class RoutineSettings:
-    def __init__(self, port=5078, markup='Basic', return_codes=None, buffer_size=1024, latency_size=4):
-        '''(Int, String, List of Ints, Int, Int) -> None
-			:a container class for the settings of the routines config file. These are
-			 generic parameters that control the barebone functionality of the sockets.'''
-        self.port = port
-        self.markup = markup
-        self.return_codes = return_codes
-        self.buffer_size = buffer_size
-        self.latency_size = latency_size
+    custom_settings:list = field(default_factory=list)
+    custom_scripts:list = field(default_factory=list)
+    markup_sheets:list = field(default_factory=list)
+    port:int = 5078
+    return_codes:list = field(default_factory=list)
+    buffer_size:int = 1024
+    latency_size:int = 4
+    using_custom:bool = False

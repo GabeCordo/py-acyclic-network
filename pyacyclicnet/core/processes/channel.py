@@ -8,6 +8,7 @@
 
 from typing import Generic, Tuple
 from pyacyclicnet.core.timing.timer import Timer
+from pyacyclicnet.core.types.routine import Routine
 
 ###############################
 #		Container Class
@@ -15,7 +16,7 @@ from pyacyclicnet.core.timing.timer import Timer
 
 class Channel:
 	
-	def __init__(self, class_g):
+	def __init__(self, routine: Routine):
 		'''
 			(Container, Generic) -> None
 			:the constructor for the Container class
@@ -24,7 +25,7 @@ class Channel:
 					   provided to the wrapper class
 			@paramters the generic should be a type of Node socket
 		'''
-		self.class_g = class_g #the class passed to be wrapped by the container
+		self.routine = routine #the class passed to be wrapped by the container
 		self.alive = 0.0 #time the container has been alive
 		
 		self._timer = Timer() #records the time container was created
@@ -39,14 +40,6 @@ class Channel:
 			@returns a float representing the time on the heap 
 		'''
 		return self._timer.timeAlive()
-
-	def freeze(self):
-		# TODO
-		pass
-
-	def restart(self):
-		# TODO
-		pass
 		
 	def kill(self) -> float:
 		'''
@@ -56,7 +49,7 @@ class Channel:
 			
 			@returns a float representing the total runtime of the object 
 		'''
-		del(self.class_g)
+		del(self.routine)
 		del(self._timer)
 	
 	def __eq__(self, other) -> bool:
@@ -124,7 +117,7 @@ class Channel:
 			@returns a string representing the Container class with the name of
 					 the Generic class and the life-time of the container
 		'''
-		return f'Container({self.class_g}, {self.alive})'
+		return f'Container({self.routine}, {self.alive})'
 	
 	def __repr__(self) -> Tuple():
 		'''
@@ -135,4 +128,9 @@ class Channel:
 			
 			@returns a tuple of the class and the metadata list
 		'''
-		return (self.class_g, self._metadata)
+		return (self.routine, self._metadata)
+
+	def __del__(self):
+		'''
+  		'''
+		pass

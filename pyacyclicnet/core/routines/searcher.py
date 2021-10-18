@@ -1,23 +1,37 @@
-from posixpath import dirname
 from pyacyclicnet import constants
 from os import walk
 
-class Searcher:
+from pyacyclicnet.constants import PATH_COLLECTION_ROUTINES, STANDARD_ROUTINE_ROOT_FILES, STANDARD_ROUTINE_ROOT_DIRS
+from pyacyclicnet.core.types.errors import RoutineNotFound
+from pyacyclicnet.core.types.routine import Routine
+from pyacyclicnet.core.types.result import Result
+
+class RoutineSearcher:
     def __init__(self) -> None:
         '''
         '''
-        self.routines = []
+        self.routines = {}  # [key:name_of_routine => value:routine_path]
 
-    def _add_routine(self):
-        pass
-
-    def _find_routines(self):
+    def find_routines(self) -> dict:
         '''
         '''
+        for root, dirs, files in walk(PATH_COLLECTION_ROUTINES, topdown=False):
+            contains_req_dirs = set(STANDARD_ROUTINE_ROOT_DIRS) <= set(dirs)
+            contains_req_files = set(STANDARD_ROUTINE_ROOT_FILES) <= set(files)
+            if contains_req_dirs and contains_req_files:
+                routine_name = root.split("/")[-1]  # split a pwd by the root / character, the last index should be the name of the routine folder
+                self.routines[routine_name] = root  # the root directory of the current index
+        
+        return self.routines
+    
+    def load_routine(self, name: str) -> Result(Routine, RoutineNotFound):
+        if name not in self.routines:
+            return Result(None, RoutineNotFound)
+        # pass the directory of the routine we want into the Routine class and generate
+        # a new object which contains all the associated metadata to the CustomNode object
+        return Routine(self.routines[name])
 
-        # collect the name of folders within the 'common/collection' directory
-        _, routine_names, _ = next(walk(constants.PATH_COLLECTION_ROUTINES))
-
-        # iterate over the folder names and try to add them as routines
-        for i in len(routine_names):
-            self._add_routine(routine_names[i])
+if __name__ == '__main__':
+    r = RoutineSearcher()
+    r.find_routines()
+    

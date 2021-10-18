@@ -10,6 +10,7 @@ addresses = containers.Addresses(
   	ip_index='', 
     ip_backup=''
 )
+print(addresses)
 
 paths = containers.Paths(
 	directory_key_public=ROOT_PATH+'/index/private/public2.pem', 

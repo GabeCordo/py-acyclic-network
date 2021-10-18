@@ -153,6 +153,14 @@ class ConflictingRoutineConfig(Exception):
 	def __init__(self):
 		Exception.__init__(self, f'The configurations found the in the venezia routine is conflicting, hence, invalid.')
 
+class RoutineNotFound(Exception):
+	def __init__(self):
+		Exception.__init__(self, f'Could not find a valid routine associated with the provided name.')
+  
+class RoutineCouldNotShutdown(Exception):
+    def __init__(self):
+        Exception.__init__(self, f'While attempting to shutdown the routine, there was an error.')
+  
 ##########################################
 # Dynamic Errors
 ##########################################

@@ -1,6 +1,6 @@
 from os import path
 
-PATH_SYSTEM = path.abspath(__file__)[:-15]
+PATH_SYSTEM = path.abspath(__file__)[:-25]
 
 # json files
 PATH_CONFIG = PATH_SYSTEM + 'common/config.json'
@@ -17,9 +17,14 @@ PATH_ASYNC_PRIVATE = PATH_SYSTEM + 'common/crypto/private.pem'
 
 # downloaded routines
 PATH_COLLECTION_ROUTINES = PATH_SYSTEM + 'common/collection/'
+PATH_COLLECTION_TEMPLATE = PATH_SYSTEM + 'common/collection/template/'
 
 # folder directory paths
-PATH_PREFIX_CLI = PATH_SYSTEM + 'src/cli/'
-PATH_PREFIX_GUI = PATH_SYSTEM + 'src/gui/'
-PATH_PREFIX_UTILS = PATH_SYSTEM + 'src/utils/'
-PATH_PREFIX_MAIN = PATH_SYSTEM + 'src/core/'
+PATH_PREFIX_CLI = PATH_SYSTEM + 'pyacyclicnet/cli/'
+PATH_PREFIX_UTILS = PATH_SYSTEM + 'pyacyclicnet/utils/'
+PATH_PREFIX_MAIN = PATH_SYSTEM + 'pyacyclicnet/core/'
+
+# routine constants
+
+STANDARD_ROUTINE_ROOT_FILES = ['config.yaml', 'routine.py', 'author.yaml']
+STANDARD_ROUTINE_ROOT_DIRS = ['scripts', 'data']

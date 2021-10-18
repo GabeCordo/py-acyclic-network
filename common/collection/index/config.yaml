@@ -19,12 +19,11 @@ config:
 		port: 5078
 		markup: Basic
 		return-codes:
-			rsp-0: "general failure"
-			rsp-1: "successful"
-			rsp-2: "transfer failure"
+			- 0
+			- 1
+			- 2
 		buffer-size: 1024
 		latency-size: 4
-		timeout-delay: 60
 	addresses:
 		ip: 127.0.0.1
 		index: 127.0.0.1
@@ -40,8 +39,8 @@ config:
 		recovery: On
 		console: Off
 		data-capture: Off
-	outgoing-transfers:
-		drop-unencrypted-connections: On
+		dynamic-interaction: Off
+		dynamic-keyset: Off
 	custom:
 		using-custom: Off
 		custom-settings:
@@ -51,6 +50,6 @@ config:
 			- script2.py
 			- script3.py
 		markup-sheets:
-			- listOfJSON
-			- listOfYAML
-			- listOfGORM
+			- sheet1.mkdn
+			- sheet2.mkdn
+			- sheet3.mkdn
