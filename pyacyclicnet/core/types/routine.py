@@ -129,7 +129,7 @@ class Routine():
 		if (self._node_object is None):
 			return False
 
-   		del(self._node_object)
+		del(self._node_object)
 		self._node_object = None
 		return True
       

@@ -8,32 +8,26 @@ import cmd, os, sys
 # cli Imports
 #####################################
 
-from pyacyclicnet.core.network import node
-from pyacyclicnet.utils import containers, generator
+from pyacyclicnet.constants import PATH_CONFIG
 from pyacyclicnet.cli.graphics import terminal
+from pyacyclicnet.core.linker.linkerJSON import LinkerJson
 
 #####################################
-# Default Paramaters
+# 		  Global Variables
 #####################################
 
-config = config.Config('json/config.json')
-client = None
-
-OPEN_NODE = config.getEntryServer()
-INDEXING = config.isIndexed()
-CACHING = config.isCaching()
-
-HIGHLIGHTED_NODE = ""
+config = LinkerJson(PATH_CONFIG).data[0]
+current_node = "None"
 
 #####################################
 #		 Terminal Interface
 #####################################
 
-class interface(cmd.Cmd):
+class Interface(cmd.Cmd):
 	
 	def __init__(self):
 		cmd.Cmd.__init__(self)
-		self.prompt = HIGHLIGHTED_NODE + '> ' #this will display the node that is currently being configured
+		self.prompt = current_node + '> ' #this will display the node that is currently being configured
 	
 	##############################
 	##		Visual Settings		##
@@ -42,8 +36,8 @@ class interface(cmd.Cmd):
 	def do_banner(self, args):
 		'''Refresh the manakin client terminal with a new banner.
 		'''
-		os.system('clear') #clear the temrinal to have a fresh start
-		prompt.cmdloop(intro=terminal.banner())
+		os.system('clear') #clear the terminal to have a fresh start
+		self.prompt.cmdloop(intro=terminal.banner())
 	def def_banner(self, args):
 		'''
 		'''
@@ -375,12 +369,3 @@ class interface(cmd.Cmd):
 		'''
 		'''
 		print("syntax: quit [userid]")
-	
-#####################################
-#		 	  Main Code
-#####################################
-
-if __name__ == '__main__':
-	prompt = interface()
-	prompt.cmdloop(intro=terminal.banner())
-	client.settup()

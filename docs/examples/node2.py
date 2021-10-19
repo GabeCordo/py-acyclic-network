@@ -3,6 +3,7 @@ ROOT_PATH = str(pathlib.Path(__file__).parent.resolve())
 
 from pyacyclicnet.core.network.node import Node
 from pyacyclicnet.core.types import containers
+from pyacyclicnet.cli.graphics.terminal import print_table
 
 addresses = containers.Addresses(
 	ip='',
@@ -10,7 +11,8 @@ addresses = containers.Addresses(
   	ip_index='', 
     ip_backup=''
 )
-print(addresses)
+print_table(addresses.key_pair())
+quit(0)
 
 paths = containers.Paths(
 	directory_key_public=ROOT_PATH+'/index/private/public2.pem', 

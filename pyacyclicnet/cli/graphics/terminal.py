@@ -64,6 +64,36 @@ def banner():
 	else:
 		banner = bird() + watermark()
 	return banner
+
+#####################################
+#		   Sheet Graphics
+#####################################
+
+MAX_PRINT_BOX_SIZE = 30
+ASCII_BORDER = "-"*(MAX_PRINT_BOX_SIZE+1)
+
+ascii_column = lambda largest_string, used_space: " " * (largest_string - used_space) + "| "
+ascii_space_ending = lambda data, used_space : " " * (MAX_PRINT_BOX_SIZE - (len(str(data)) + used_space)) + "|"
+
+def print_table(key_pairs: dict):
+    '''
+		(list(tuple(str, generic))) -> None
+		:prints key-pair data into an ascii table.
+  
+		@param data must be formated in [ (key, pair) , ... ]
+    '''
+    # calculate the largest key in the dictionary
+    largest_key = 0
+    for key, _ in key_pairs.items():
+        cur_len = len(key)
+        if cur_len > largest_key:
+            largest_key = cur_len
+            
+	# print the table to the screen
+    print(ASCII_BORDER)
+    for key, value in key_pairs.items():
+        print("| " + key + ascii_column(largest_key, len(key)) + str(value) + ascii_space_ending(value, largest_key+4))
+    print(ASCII_BORDER)
 	
 #####################################
 #		   Data Graphics

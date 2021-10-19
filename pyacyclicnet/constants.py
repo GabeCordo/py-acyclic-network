@@ -2,7 +2,11 @@ from os import path
 
 PATH_SYSTEM = path.abspath(__file__)[:-25]
 
-# json files
+# framework metadata
+PACKAGE_VERSION = "0.0.1"
+PACKAGE_URL = "https://github.com/GabeCordo/py-acyclic-network"
+
+# configurations
 PATH_CONFIG = PATH_SYSTEM + 'common/config.json'
 
 # txt encoded cache files

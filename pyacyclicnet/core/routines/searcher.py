@@ -11,6 +11,17 @@ class RoutineSearcher:
         '''
         '''
         self.routines = {}  # [key:name_of_routine => value:routine_path]
+    
+    @staticmethod
+    def is_valid(path:str) -> bool:
+        '''
+        '''
+        _, dirs, files = walk(PATH_COLLECTION_ROUTINES, topdown=False)
+        contains_req_dirs = set(STANDARD_ROUTINE_ROOT_DIRS) <= set(dirs)
+        contains_req_files = set(STANDARD_ROUTINE_ROOT_FILES) <= set(files)
+        if contains_req_dirs and contains_req_files:
+            return True
+        return False
 
     def find_routines(self) -> dict:
         '''

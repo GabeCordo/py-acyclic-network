@@ -6,7 +6,6 @@ longDescription = 'A pythonic framework promoting the use of decentralized archi
 
 setup(
 	name = 'pyacyclicnet',
-	packages = find_packages(),
 	version = '0.0.1',
 	license = 'MIT',
 	description = longDescription,
@@ -16,6 +15,8 @@ setup(
 	long_description_content_type = 'text/markdown',
 	url ='https://github.com/GabeCordo/py-acyclic-network',
 	download_url = '',
+	packages = find_packages(),
+	scripts = ['bin/acyclicnet'],
 	keywords = ['ACYCLIC', 'SOCKETS', 'SECURITY', 'ENCRYPTION', 'DATA-ROUTING', 'BLOCKCHAIN'],
 	install_requires = [
 		'cffi',

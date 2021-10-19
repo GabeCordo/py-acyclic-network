@@ -1,17 +1,5 @@
 from dataclasses import dataclass, field
-
-###############################
-#	Container Constants
-###############################
-
-MAX_PRINT_BOX_SIZE = 30
-ASCII_BORDER = " " + "-"*(MAX_PRINT_BOX_SIZE - 1)
-
-###############################
-#	   Container Lambdas
-###############################
-
-ascii_space_ending = lambda data, used_space : " " * (MAX_PRINT_BOX_SIZE - (len(data) + used_space)) + "|"
+from os import curdir
 
 ###############################
 #	IP Address Indexing
@@ -24,14 +12,13 @@ class Addresses:
 	ip_index:str = ''
 	ip_backup:str = ''
 
-	def __str__(self):
-		print(ASCII_BORDER)
-		print("| ip: "	+ self.ip + ascii_space_ending(self.ip, 6))
-		print(ASCII_BORDER)
-		print("| port: " + str(self.port) + ascii_space_ending(str(self.port), 8))
-		print("| index: " + self.ip_index + ascii_space_ending(self.ip_index, 9))
-		print("| backup: " + self.ip_backup + ascii_space_ending(self.ip_backup, 10))
-		print(ASCII_BORDER)
+	def key_pair(self) -> list():
+		return {
+			'ip': self.ip,
+			'port': self.port,
+   			'index': self.ip_index,
+			'backup': self.ip_backup
+		}
 
 
 ###############################
@@ -43,6 +30,13 @@ class Paths:
 	directory_key_public:str
 	directory_key_private:str
 	directory_file_logging:str
+ 
+	def key_pair(self) -> list():
+		return {
+			'public key': self.directory_key_public,
+			'private key': self.directory_key_private,
+   			'logging': self.directory_file_logging
+		}
 
 
 ###############################
@@ -60,6 +54,19 @@ class Customizations:
 	supports_data_capture:bool = False
 	supports_dynamic_interaction:bool = True
 	supports_dynamic_keyset:bool = True
+ 
+	def key_pair(self) -> list():
+		return {
+			'encryption': self.supports_encryption,
+			'listening': self.supports_listening,
+   			'monitoring': self.supports_monitoring,
+			'backup': self.supports_backup_ip,
+			'recovery': self.supports_recovery,
+			'console-out': self.supports_console_cout,
+			'data-capture': self.supports_data_capture,
+			'dynamic-interaction': self.supports_dynamic_interaction,
+			'dynamic-keysets': self.supports_dynamic_keyset,
+		}
 
 
 ## PRE-SET CUSTOMIZATIONS FOR ROUTING NODES

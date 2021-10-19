@@ -25,7 +25,7 @@ class LinkerYaml(Linker):
 			Constructor function for the YAML handler. This function allows any number of JSON files to be entered under args*.
 		"""
 		super().__init__(args)
-  		self.pull()  # pull the loaded yaml files (if they exist) into memory
+		self.pull()  # pull the loaded yaml files (if they exist) into memory
 
 	@implements(Linker)
 	def push(self):
