@@ -67,69 +67,41 @@ class Interface(cmd.Cmd):
 	def do_whitelist(self, args):
 		'''
 		'''
-		text = local.pull_whitelist(PATH_CACHE)
-		terminal.file('whitelist', text)
+		if len(args) == 0:
+			text = local.pull_whitelist(PATH_CACHE)
+			terminal.file('whitelist', text)
+		elif args[0] == "--add" or args[0] == '-a':
+			result = local.add_whitelist(PATH_CACHE, args)
+			terminal.alert('Whitelist', f'Added {args} to the file. ({result})')
+		elif args[0] == "--remove" or args[0] == '-r':
+			local.remove_whitelist(PATH_CACHE, args)
+			terminal.alert('Whitelist', f'Removed {args} from the file.')
 	def def_whitelist(self):
 		'''
 		'''
 		print("syntax: whitelist")
 
 	
-	def do_whitelist_add(self, args):
-		'''Whitelist a foreign user-id to send you messages across the tor network.
-		'''
-		result = local.add_whitelist(PATH_CACHE, args)
-		terminal.alert('Whitelist', f'Added {args} to the file. ({result})')
-	def def_whitelist_add(self):
-		'''
-		'''
-		print("syntax: whitelist_add [userid]")
-
-	
-	def do_whitelist_remove(self, args):
-		'''
-		'''
-		local.remove_whitelist(PATH_CACHE, args)
-		terminal.alert('Whitelist', f'Removed {args} from the file.')
-	def def_whitelist_remove(self):
-		'''
-		'''
-		print("syntax: whitelist_remove [user-id]")
-
-	
 	def do_blacklist(self, args):
 		'''
 		'''
-		text = local.pull_blacklist(PATH_CACHE)
-		terminal.file('blacklist', text)
+		if len(args) == 0:
+			text = local.pull_blacklist(PATH_CACHE)
+			terminal.file('blacklist', text)
+		elif args[0] == "--add" or args[0] == '-a':
+			result = local.add_blacklist(PATH_CACHE, args)
+			terminal.alert('Blacklist', f'Added {args} to the file. ({result})')
+		elif args[0] == "--remove" or args[0] == '-r':
+			result = local.remove_blacklist(PATH_CACHE, args)
+			terminal.alert('Blacklist', f'Removed {args} to the file. ({result})')
 	def def_blacklist(self):
 		'''
 		'''
 		print("syntax: blacklist")
-
-	
-	def do_blacklist_add(self, args):
-		'''Blacklist a foreign a user-id to stop the transfer of messages.
-		'''
-		result = local.add_blacklist(PATH_CACHE, args)
-		terminal.alert('Blacklist', f'Added {args} to the file. ({result})')
-	def def_blacklist_add(self):
-		'''
-		'''
-		print("syntax: blacklist_add [user-id]")
-
-		
-	def do_blacklist_remove(self, args):
-		'''
-		'''
 		result = local.remove_blacklist(PATH_CACHE, args)
 		terminal.alert('Blacklist', f'Removed {args} to the file. ({result})')
-	def def_blacklist_remove(self):
-		'''
-		'''
-		print("syntax: blacklist_remove [user-id]")
-
 	
+ 
 	def do_routine(self, args):
 		'''Toggle the caching of messages received on your client whitelist.
 		'''
