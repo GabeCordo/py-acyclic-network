@@ -1,18 +1,15 @@
+from dataclasses import dataclass
 from pyacyclicnet.core.types.enums import RequestCode
 
-
+@dataclass
 class Request:
-	def __init__(self, ip: str, cipher: str, rsa_pub: str, plaintext: str,
-			authentication: str, nonce: str, request: RequestCode):
-		"""
-		"""
-		self.ip = ip
-		self.request_code = request
-		self.rsa_pub = rsa_pub
-		self.cipher = cipher
-		self.plaintext = plaintext
-		self.authentication = authentication
-		self.nonce = nonce
+	ip:str
+	request_code:RequestCode
+	rsa_pub:str
+	cipher:str
+	plaintext:str
+	authentication:str
+	nonce:str
 
 	def serialize(self) -> dict:
 		"""
@@ -56,10 +53,5 @@ class Request:
 	def __str__(self) -> str:
 		"""
 		"""
-		return f'ip:{self.ip}\nrequest:{self.request}\nauth:{self.authentication}\n' \
+		return f'ip:{self.ip}\nrequest:{self.request_code}\nauth:{self.authentication}\n' \
 			   + f'nonce:{self.nonce}\n{self.rsa_pub}\n{self.cipher}\n{self.plaintext}'
-
-	def __repr__(self) -> str:
-		"""
-		"""
-		return f'Request({self.ip}, {self.request}, {self.nonce})'

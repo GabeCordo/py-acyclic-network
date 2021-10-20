@@ -1,3 +1,5 @@
+from dataclasses import dataclass, field
+
 from pyacyclicnet.core.types.enums import RequestTableLifetime
 from pyacyclicnet.core.bitstream.parser import ProtocolParser
 from datetime import date, datetime
@@ -6,13 +8,9 @@ from pyacyclicnet.core.types.result import Result
 RESPONSE_TIME_THRESHOLD = 600
 TIME_DIFFERENCE = lambda last_time: (datetime.now() - last_time).total_seconds() >= RESPONSE_TIME_THRESHOLD
 
-
+@dataclass
 class ResponseHashTable:
-	def __init__(self) -> None:
-		"""
-			:initializes a new hash-table to store request structs
-		"""
-		self.__table = {}
+	__table:dict = field(default_factory=dict)
 
 	def __validate_nonce(self, hash: str) -> bool:
 		"""

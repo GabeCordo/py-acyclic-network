@@ -1,21 +1,15 @@
+from dataclasses import dataclass
+
 from typing import Generic, TypeVar
 from pyacyclicnet.core.types import errors
 
 T = TypeVar('T')
 G = TypeVar('G')
 
+@dataclass
 class Result:
-    def __init__(self, value_g: Generic[T], exception_g: Generic[G]) -> None:
-        """
-            (Result, Generic, Exception) -> None
-            :Constructor for the Any Class
-
-            @returns nothing
-            @exception returns InvalidResultClassArguments exception
-        """
-        # either value_g or exception_g should have a non None value (XOR)
-        self.__value_g = value_g
-        self.__exception_g = exception_g
+    __value_g:Generic[T]
+    __exception_g:Generic[G]
 
     def is_valid(self) -> bool:
         """

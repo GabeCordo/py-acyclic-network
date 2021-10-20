@@ -83,6 +83,18 @@ NODE_SETTINGS_DEFAULT = Customizations(
 	supports_dynamic_keyset = True,
 )
 
+NODE_SETTINGS_TRANSMITTER = Customizations(
+	supports_encryption = True,	
+	supports_listening = False,
+	supports_monitoring = False,
+	supports_backup_ip = False,
+	supports_recovery = False,
+	supports_console_cout = False,
+	supports_data_capture = False,
+	supports_dynamic_interaction = False,
+	supports_dynamic_keyset = False
+)
+
 PRESET_SETTINGS_ENTRY = Customizations(
 	supports_encryption=True,
 	supports_listening=True,
@@ -135,6 +147,17 @@ class RoutineAuthor:
 	version:float = 1.0
 	description:str = ''
 	licence:str = ''
+ 
+	def key_pair(self) -> list():
+		return {
+			'author-name': self.author_name,
+			'author-email': self.author_email,
+   			'release-date': self.date,
+			'routine-name': self.name,
+			'version': self.version,
+			'description': self.description,
+			'licence': self.licence
+		}
 
 
 @dataclass
@@ -147,3 +170,11 @@ class RoutineSettings:
     buffer_size:int = 1024
     latency_size:int = 4
     using_custom:bool = False
+    
+    def key_pair(self) -> list():
+        return {
+			'port': self.port,
+			'buffer-size': self.buffer_size,
+   			'latency-size': self.latency_size,
+			'using-custom': self.using_custom
+		}

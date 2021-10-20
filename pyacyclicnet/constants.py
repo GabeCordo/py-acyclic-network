@@ -10,10 +10,11 @@ PACKAGE_URL = "https://github.com/GabeCordo/py-acyclic-network"
 PATH_CONFIG = PATH_SYSTEM + 'common/config.json'
 
 # txt encoded cache files
-PATH_CACHE_BLACKLIST = PATH_SYSTEM + 'common/cache/blacklist.txt'
-PATH_CACHE_PENDING = PATH_SYSTEM + 'common/cache/pending.txt'
-PATH_CACHE_WHITELIST = PATH_SYSTEM + 'common/cache/whitelist.txt'
-PATH_CACHE_COLLECTION = PATH_SYSTEM + 'common/cache/collection/'
+PATH_CACHE = PATH_SYSTEM + 'common/cache/'
+PATH_CACHE_BLACKLIST = PATH_CACHE + 'blacklist.txt'
+PATH_CACHE_PENDING = PATH_CACHE + 'pending.txt'
+PATH_CACHE_WHITELIST = PATH_CACHE + 'whitelist.txt'
+PATH_CACHE_COLLECTION = PATH_CACHE + 'collection/'
 
 # pem encryption key folders
 PATH_ASYNC_PUBLIC = PATH_SYSTEM + 'common/crypto/public.pem'

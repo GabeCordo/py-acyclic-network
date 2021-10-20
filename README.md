@@ -1,3 +1,5 @@
+![](/docs/diagrams/terminal.png)
+
 # py-acyclic-network
 This project has been active since September 2019.
 

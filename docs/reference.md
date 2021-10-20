@@ -91,7 +91,7 @@ to other sockets
 
 #### Handshake
 
-![Standard Handshake](https://github.com/GabeCordo/venezia/blob/master/docs/diagrams/transfer.png)
+![Standard Handshake](docs/diagrams/transfer.png)
 
 1. Connection
     * initializes the FTP connection, a confirmation is sent to the connecting node that communication
@@ -143,7 +143,7 @@ phase of the transfer.**
 
 ### Routing
 
-![Packet Routing](https://github.com/GabeCordo/venezia/blob/master/docs/diagrams/flow.png)
+![Packet Routing](docs/diagrams/flow.png)
 The above diagram is a simplified overview of the routing procedure, segmented into identifiable zones used by response codes of the protocol post-completion.  
 
 #### Preliminary Phase
@@ -205,7 +205,7 @@ The exit node is a final assurance that a 3rd-party route-stop node has not been
 * an Indexer node will have an updated list of exit nodes to place into a encoded pathway
 
 ### Verification
-![VerificationProcedure](https://github.com/GabeCordo/venezia/blob/master/docs/diagrams/pat.png)
+![VerificationProcedure](docs/diagrams/pat.png)
 A hash of the messages: (1) route-stop id and (2) timestamp is created before the transfer from one pathway point to another. This is appended to the end of an encoded Venezia block and then extracted by the received route-stop and verified by the PAT encoded into the pathway. The PAT will then: (1) ensure the route-stop id was chosen as the next destination id and (2) verify the time between transfers does not exceed a time that might indicate a delayed or intercepted transfer. This is the method of authentication currently being implemented into the Venezia.
 
 * A packet injected to appear as if it originated from the network will be detected as fraudulent as either the encoded pathway will be missing a CAT-ID or the CAT will not be able to verify it signed off on the transfer.

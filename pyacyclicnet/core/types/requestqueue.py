@@ -1,10 +1,11 @@
+from dataclasses import dataclass, field
+
 from pyacyclicnet.core.types.result import Result
 from pyacyclicnet.core.types.errors import QueueEmpty
 
-
+@dataclass
 class RequestQueue:
-	def __init__(self) -> None:
-		self.__queue = []  # all unhandled requests will go here
+	__queue:list = field(default_factory=list)  # all unhandled requests will go here
 
 	def size_of_queue(self) -> int:
 		"""

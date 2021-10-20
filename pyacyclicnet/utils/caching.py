@@ -43,7 +43,7 @@ class Cache:
 			@exception returns boolean false if the file-exists or the
 					   pathway is corrupt or invalid
 		'''
-		path = self.generatePath(identifier)
+		path = self.generate_path(identifier)
 		
 		try:
 			file_manage = open(path, "w+")
@@ -64,7 +64,7 @@ class Cache:
 			@returns a list of strings, each index representing a new line
 			@exception returns an empty list if the file doesn't exist
 		'''
-		path = self.generatePath(identifier)
+		path = self.generate_path(identifier)
 		
 		try:
 			file_manage = open(path, "r")
@@ -84,7 +84,7 @@ class Cache:
 			@returns the cached file as a string
 			@exception returns an empty string if the file doesn't exist
 		'''
-		return '\n'.join(self.lookupCachedFile(identifier))
+		return '\n'.join(self.lookup_cached_file(identifier))
 	
 	def lookup_cached_file_element(self, identifier):
 		'''
@@ -95,7 +95,7 @@ class Cache:
 			@exception returns boolean false if it is not in the file
 		'''
 		try:
-			temp_list = self.lookupCachedFile(identifier)
+			temp_list = self.lookup_cached_file(identifier)
 			temp_list.pop(identifier)  # will error if it does not exist
 		except Exception as e:
 			print(f'Console: caching experienced {e}')
@@ -114,7 +114,7 @@ class Cache:
 			@exception returns boolean false if the data was not
 					   written
 		'''
-		path = self.generatePath(identifier)
+		path = self.generate_path(identifier)
 		
 		try:
 			file_manage = open(path, "a")
@@ -135,7 +135,7 @@ class Cache:
 			@exception returns boolean false if the file was not
 					   deleted from the cache folder
 		'''
-		path = self.generatePath(identifier)
+		path = self.generate_path(identifier)
 		
 		try:
 			remove(path)  # linked to os.remove
@@ -160,11 +160,11 @@ class Cache:
 			** if the element d.n.e will return true still **
 		'''
 		# grab the data currently stored within the cache file
-		data = self.lookupCachedFile(identifier)
+		data = self.lookup_cached_file(identifier)
 		i = data.index(element)  # index the element we want to remove
 		data.pop(i)
 		
-		path = self.generatePath(identifier)
+		path = self.generate_path(identifier)
 		
 		try:
 			file_manage = open(path, 'w')

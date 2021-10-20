@@ -17,8 +17,8 @@ def watermark():
 		
 		@returns the programmer and repository details
 	'''
-	title = 'Venezia v0.1, Coded by: @GabeCordo (GitHub)'
-	text = '\n[' + colored.yellow('+') + '] github.com/GabeCordo/manakin-messenger\n'
+	title = 'Acyclicnet v0.0.1, Coded by: @GabeCordo (GitHub)'
+	text = '\n[' + colored.yellow('+') + '] github.com/GabeCordo/py-acyclic-net\n'
 	return (title + text)
 
 def bird():
@@ -48,7 +48,7 @@ def logo():
 		@returns a graphic representation of 'manakin'
 	'''
 	f = Figlet(font='slant')
-	banner = ('\n' + str(colored.yellow(f.renderText(' Manakin'))))
+	banner = ('\n' + str(colored.yellow(f.renderText('Acyclicnet'))))
 	return banner
 	
 def banner():
@@ -64,6 +64,13 @@ def banner():
 	else:
 		banner = bird() + watermark()
 	return banner
+
+#####################################
+#		   Text Graphics
+#####################################
+
+def underline(message:str) -> str:
+    return "\u0332".join(message + " ")
 
 #####################################
 #		   Sheet Graphics
@@ -125,9 +132,9 @@ def message(id_user, message, comment, timestamp):
 	'''
 	header = colored.white(id_user)
 	header = f'[ {header} ] '
-	time = datetime.now()
+	time = str(datetime.now())[:16]
 	
-	print(f'{header}{message} // {comment}\t( {time} )') 
+	print(f'{header}{message} -> {comment} ( {time} )') 
 	
 def alert(header, message):
 	'''

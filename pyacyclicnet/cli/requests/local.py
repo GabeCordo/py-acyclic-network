@@ -5,38 +5,40 @@ from pyacyclicnet.utils import caching
 
 ##		Whitelist Functions		##
 
-def pullWhitelist(directory):
+def pull_whitelist(directory):
 	'''
 		(string) -> (list of strings)
 		
 		@returns a list of strings where each index represents a user-id
-				 that have been approved to send messages to the clientx
+				 that have been approved to send messages to the client
 		@exceptions returns an empty list if the directory is invalid
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.lookupCachedFile('whitelist')
-def addWhitelist(directory, id_user):
+	__caching = caching.Cache(directory)
+	return __caching.lookup_cached_file('whitelist')
+
+def add_whitelist(directory, id_user):
 	'''
 		(string, string) -> (boolean)
 		
 		@returns boolean true if the element was successfully added
 		@exception returns boolean false if the element was not added
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.appendCachedFile('whitelist', id_user)
-def removeWhitelist(directory, id_user):
+	__caching = caching.Cache(directory)
+	return __caching.append_cached_file('whitelist', id_user)
+
+def remove_whitelist(directory, id_user):
 	'''
 		(string, string) -> (boolean)
 		
 		@returns boolean true if the element was successfully removed
 		@exception returns boolean false if the element was not removed
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.deleteCachedElement('whitelist', id_user)
+	__caching = caching.Cache(directory)
+	return __caching.delete_cached_element('whitelist', id_user)
 
 ##		Blacklist Functions		##
 
-def pullBlacklist(directory):
+def pull_blacklist(directory):
 	'''
 		(string) -> (list of strings)
 		
@@ -44,30 +46,32 @@ def pullBlacklist(directory):
 				 that have been blocked from sending messages to the client
 		@exceptions returns an empty list if the directory is invalid
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.lookupCachedFile('blacklist')
-def addBlacklist(directory, id_user):
+	__caching = caching.Cache(directory)
+	return __caching.lookup_cached_file('blacklist')
+
+def add_blacklist(directory, id_user):
 	'''
 		(string, string) -> (boolean)
 		
 		@returns boolean true if the element was successfully added
 		@exception returns boolean false if the element was not added
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.appendCachedFile('blacklist', id_user)
-def removeBlacklist(directory, id_user):
+	__caching = caching.Cache(directory)
+	return __caching.append_cached_file('blacklist', id_user)
+
+def remove_blacklist(directory, id_user):
 	'''
 		(string, string) -> (boolean)
 		
 		@returns boolean true if the element was successfully removed
 		@exception returns boolean false if the element was not removed
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.deleteCachedElement('blacklist', id_user)
+	__caching = caching.Cache(directory)
+	return __caching.delete_cached_element('blacklist', id_user)
 
 ##		Pending-File Functions		##
 
-def pullPending(directory):
+def pull_pending(directory):
 	'''
 		(string) -> (boolean)
 		
@@ -75,30 +79,32 @@ def pullPending(directory):
 				 that is waiting to be added to the whitelist or blacklist
 		@exceptions returns an empty list if the directory is invalid
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.lookupCachedFile('pending')
-def addPending(directory, id_user):
+	__caching = caching.Cache(directory)
+	return __caching.lookup_cached_file('pending')
+
+def add_pending(directory, id_user):
 	'''
 		(string, string) -> (boolean)
 		
 		@returns boolean true if the element was successfully added
 		@exception returns boolean false if the element was not added
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.appendCachedFile('pending', id_user)
-def removePending(directory, id_user):
+	__caching = caching.Cache(directory)
+	return __caching.append_cached_file('pending', id_user)
+
+def remove_pending(directory, id_user):
 	'''
 		(string, string) -> (boolean)
 		
 		@returns boolean true if the element was successfully removed
 		@exception returns boolean false if the element was not removed
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.deleteCachedElement('pending', id_user)
+	__caching = caching.Cache(directory)
+	return __caching.delete_cached_element('pending', id_user)
 
 ##		Chat History Functions		##
 
-def pullChatHistory(directory, id_user):
+def pull_chat_history(directory, id_user):
 	'''
 		(string, string) -> (boolean)
 		
@@ -106,31 +112,28 @@ def pullChatHistory(directory, id_user):
 				 received from the specified user-id that has been cached
 		@exceptions returns an empty list if the directory is invalid
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.lookupCachedFile(id_user)
-def addChatHistory(directory, id_user, message):
+	__caching = caching.Cache(directory)
+	return __caching.lookup_cached_file(id_user)
+
+def add_chat_history(directory, id_user, message):
 	'''
 		(string, string) -> (boolean)
 		
 		@returns boolean true if the element was successfully added
 		@exception returns boolean false if the element was not added
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.appendCachedFile(id_user, message)
-def deleteChatHistory(directory, id_user):
+	__caching = caching.Cache(directory)
+	return __caching.append_cached_file(id_user, message)
+
+def delete_chat_history(directory, id_user):
 	'''
 		(string, string) -> (boolean)
 		
 		@returns boolean true if the element was successfully removed
 		@exception returns boolean false if the element was not removed
 	'''
-	__caching = caching.fileHandler(directory)
-	return __caching.deleteCachedFiled(id_user)
-	
-def transferPending(directory, id_user, location):
-	'''
-	'''
-	pass
+	__caching = caching.Cache(directory)
+	return __caching.delete_cached_element(id_user)
 	
 def splitter(request):
 	'''

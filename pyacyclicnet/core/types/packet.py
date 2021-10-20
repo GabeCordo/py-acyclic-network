@@ -1,17 +1,16 @@
+from dataclasses import dataclass, field
 from pyacyclicnet.core.types import request
 
-
+@dataclass
 class Packet:
-    def __init__(self, request:int, pat_id:str, pat_auth:str, next_node:str, idp_ip:str, nonce:int, ip_path:list(), data: str) -> None:
-        ''''''
-        self.request = request
-        self.pat_id = pat_id
-        self.pat_auth = pat_auth
-        self.next_node = next_node
-        self.idp_ip = idp_ip
-        self.nonce = nonce
-        self.ip_path = ip_path
-        self.data = data
+    request:int
+    pat_id:str
+    pat_auth:str
+    next_node:str
+    idp_ip:str
+    nonce:int
+    data:str
+    ip_pathlist:list = field(default_factory=list)
 
     def is_valid(self) -> bool:
         ''''''
@@ -32,10 +31,6 @@ class Packet:
         if self.pat_auth != o.pat_auth:
             return True
         return True
-
-    def __repr__(self) -> str:
-        ''''''
-        return f'Packet(request={self.request}, pat_id={self.pat_id}, pat_auth{self.pat_auth}, nonce={self.nonce})'
 
     def __str__(self):
         ''''''
